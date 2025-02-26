@@ -5,15 +5,13 @@ import com.webedu.ben_barber.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
 @Controller
-@RequestMapping(value = "/users")
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
@@ -24,6 +22,12 @@ public class UserController {
         user = userService.addUser(user);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(uri).body(user);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Long id) {
+        User updateUser = userService.updateUser(id, user);
+        return ResponseEntity.ok(updateUser);
     }
 
 }
