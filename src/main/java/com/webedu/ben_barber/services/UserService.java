@@ -1,6 +1,7 @@
 package com.webedu.ben_barber.services;
 
 import com.webedu.ben_barber.entities.User;
+import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
 import com.webedu.ben_barber.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,5 +41,11 @@ public class UserService {
     @Transactional
     public List<User> findAllUsers() {
         return userRepository.findAll();
+    }
+
+    @Transactional
+    public User findById(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        return userOptional.orElseThrow(() -> new ResourceNotFoundException(id));
     }
 }
