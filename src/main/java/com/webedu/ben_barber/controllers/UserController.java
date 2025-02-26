@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @Controller
 @RequestMapping("/users")
@@ -28,6 +29,12 @@ public class UserController {
     public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Long id) {
         User updateUser = userService.updateUser(id, user);
         return ResponseEntity.ok(updateUser);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<User>> findAllUsers() {
+        List<User> list = userService.findAllUsers();
+        return ResponseEntity.ok(list);
     }
 
 }
