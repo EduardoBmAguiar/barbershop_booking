@@ -1,9 +1,11 @@
 package com.webedu.ben_barber.services;
 
 import com.webedu.ben_barber.entities.User;
+import com.webedu.ben_barber.exceptions.DatabaseException;
 import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
 import com.webedu.ben_barber.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,5 +49,15 @@ public class UserService {
     public User findById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         return userOptional.orElseThrow(() -> new ResourceNotFoundException(id));
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+        try {
+            userRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage());
+        }
     }
 }
