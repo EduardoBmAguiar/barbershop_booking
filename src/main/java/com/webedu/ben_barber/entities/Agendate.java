@@ -17,9 +17,9 @@ import java.time.Instant;
 @EqualsAndHashCode
 public class Agendate {
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "agendate_seq")
+    @SequenceGenerator(name = "agendate_seq", sequenceName = "agendate_seq", allocationSize = 1)
     private Long id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
