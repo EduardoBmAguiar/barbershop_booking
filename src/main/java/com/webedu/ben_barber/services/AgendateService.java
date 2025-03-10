@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class AgendateService {
@@ -21,6 +21,10 @@ public class AgendateService {
 
     @Autowired
     UserRepository userRepository;
+
+    public List<Agendate> findAll() {
+        return agendateRepository.findAll();
+    }
 
     @Transactional
     public Agendate addAgendate(Long id, Agendate agendate) {
@@ -43,4 +47,6 @@ public class AgendateService {
 
 
     }
+
+
 }
