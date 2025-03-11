@@ -22,8 +22,15 @@ public class AgendateService {
     @Autowired
     UserRepository userRepository;
 
+    @Transactional
     public List<Agendate> findAll() {
         return agendateRepository.findAll();
+    }
+
+    @Transactional
+    public Agendate findById(Long id) {
+        return agendateRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Agendate with " + id + " not found!"));
     }
 
     @Transactional
@@ -43,10 +50,8 @@ public class AgendateService {
         agendate.setClient(user);
 
         return agendateRepository.save(agendate);
-
-
-
     }
+
 
 
 }
