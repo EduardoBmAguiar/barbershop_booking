@@ -52,6 +52,15 @@ public class AgendateService {
         return agendateRepository.save(agendate);
     }
 
+    @Transactional
+    public Agendate updateAgendate(Long id, Agendate agendate) {
 
+        Agendate newAgendate = agendateRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+
+        if (!(agendate.getChosenDate() == null)) { newAgendate.setChosenDate(agendate.getChosenDate()); }
+        if (!(agendate.getStatus() == null)) { newAgendate.setStatus(agendate.getStatus()); }
+
+        return agendateRepository.save(newAgendate);
+    }
 
 }

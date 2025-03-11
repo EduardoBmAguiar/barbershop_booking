@@ -40,4 +40,10 @@ public class AgendateController {
 
         return ResponseEntity.created(uri).body(agendate);
     }
-}
+
+    @PutMapping(value = "/{id}")
+     public ResponseEntity<Agendate> updateAgendate(@PathVariable Long id, @RequestBody Agendate agendate) {
+        agendate = agendateService.updateAgendate(id, agendate);
+        return ResponseEntity.ok(agendate);
+    }
+ }
