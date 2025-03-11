@@ -30,4 +30,8 @@ public class Agendate {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
+
+    @ManyToOne
+    @JoinColumn(name = "option_id")
+    private Option option;
 }
