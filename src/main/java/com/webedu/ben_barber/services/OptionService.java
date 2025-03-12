@@ -1,6 +1,7 @@
 package com.webedu.ben_barber.services;
 
 import com.webedu.ben_barber.entities.Option;
+import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
 import com.webedu.ben_barber.repositories.OptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,14 @@ public class OptionService {
     }
 
     @Transactional
-    public List<Option> findAllOptions()  {
+    public List<Option> findAllOptions() {
         return optionRepository.findAll();
+    }
+
+    @Transactional
+    public Option updatePrice(Long id, Option newPrice) {
+        Option option = optionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Id Not Found"));
+        option.setPrice(newPrice.getPrice());
+        return optionRepository.save(option);
     }
 }
