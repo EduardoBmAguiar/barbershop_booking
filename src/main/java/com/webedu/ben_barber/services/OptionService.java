@@ -4,6 +4,7 @@ import com.webedu.ben_barber.entities.Option;
 import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
 import com.webedu.ben_barber.repositories.OptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,5 +31,15 @@ public class OptionService {
         Option option = optionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Id Not Found"));
         option.setPrice(newPrice.getPrice());
         return optionRepository.save(option);
+    }
+
+    public void deleteOption(Long id) {
+        Option option = optionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Id Not Found"));
+        try {
+            optionRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            option.setName("Option Removed");
+            optionRepository.save(option);
+        }
     }
 }

@@ -36,4 +36,10 @@ public class OptionController {
         option = optionService.updatePrice(id, option);
         return ResponseEntity.ok(option);
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Option> deleteOptionById(@PathVariable Long id) {
+        optionService.deleteOption(id);
+        return ResponseEntity.noContent().build();
+    }
 }
