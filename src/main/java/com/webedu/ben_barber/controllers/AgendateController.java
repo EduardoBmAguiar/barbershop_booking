@@ -9,6 +9,7 @@
  import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
  import java.net.URI;
+ import java.time.LocalDateTime;
  import java.util.List;
 
  @Controller
@@ -42,8 +43,14 @@ public class AgendateController {
     }
 
     @PutMapping(value = "/{id}")
-     public ResponseEntity<Agendate> updateAgendate(@PathVariable Long id, @RequestBody Agendate agendate) {
+    public ResponseEntity<Agendate> updateAgendate(@PathVariable Long id, @RequestBody Agendate agendate) {
         agendate = agendateService.updateAgendate(id, agendate);
         return ResponseEntity.ok(agendate);
+    }
+
+    @GetMapping(value = "/hoursForAgendate")
+    public ResponseEntity<List<LocalDateTime>> findAvailableHours(@RequestParam(value = "chosenDay", defaultValue = "null") Integer chosenDay) {
+        List<LocalDateTime> list = agendateService.HoursAvailable(chosenDay);
+        return ResponseEntity.ok(list);
     }
  }

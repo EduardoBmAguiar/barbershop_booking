@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AgendateService {
@@ -21,6 +23,8 @@ public class AgendateService {
 
     @Autowired
     UserRepository userRepository;
+
+    private final List<LocalDateTime> hoursAvailable = new ArrayList<>();
 
     @Transactional
     public List<Agendate> findAll() {
@@ -63,4 +67,34 @@ public class AgendateService {
         return agendateRepository.save(newAgendate);
     }
 
+    @Transactional
+    public List<LocalDateTime> HoursAvailable(Integer chosenDay) {
+        LocalDate today = LocalDate.now();
+        LocalDateTime init = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 9, 0);
+        LocalTime start = LocalTime.of(9, 0);
+        LocalTime end = LocalTime.of(18, 0);
+
+        LocalDate cD = LocalDate.of(today.getYear(), today.getMonth(), chosenDay);
+
+        List<LocalDateTime> chosenDates = HoursGenerator(init, start, end);
+        chosenDates = chosenDates.stream().filter(d -> d.toLocalDate().equals(cD)).collect(Collectors.toList());
+
+        return chosenDates;
+    }
+
+    public List<LocalDateTime> HoursGenerator(LocalDateTime init, LocalTime start, LocalTime end) {
+
+        for (int i = 0; i <= 14; i++) {
+            if (init.getDayOfWeek() != DayOfWeek.MONDAY && init.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                LocalDateTime current = LocalDateTime.of(init.toLocalDate(), start);
+
+                while (current.toLocalTime().isBefore(end)) {
+                    hoursAvailable.add(current);
+                    current = current.plusMinutes(30);
+                }
+            }
+            init = init.plusDays(1);
+        }
+        return hoursAvailable;
+    }
 }
