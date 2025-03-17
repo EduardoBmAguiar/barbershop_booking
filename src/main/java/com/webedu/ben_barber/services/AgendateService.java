@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +27,13 @@ public class AgendateService {
     @Autowired
     UserRepository userRepository;
 
-    private final List<LocalDateTime> hoursAvailable = new ArrayList<>();
+    private final List<LocalDateTime> hoursAvailable;
+
+    public AgendateService() {
+        this.hoursAvailable = new ArrayList<>();
+        this.generatorHoursAvailable();
+    }
+
 
     @Transactional
     public List<Agendate> findAll() {
@@ -38,20 +47,18 @@ public class AgendateService {
     }
 
     @Transactional
-    public Agendate addAgendate(Long id, Agendate agendate) {
+    public Agendate addAgendate(Long id, Agendate agendate, Integer chosenDay, Integer chosenHour, Integer chosenMin) {
 
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
 
-        if (agendate.getChosenDate().isBefore(Instant.now())) {
-            throw new InvalidDateException("Chosen date is after now");
-        }
-
-        boolean busyDate = agendateRepository.existsByChosenDate(agendate.getChosenDate());
-        if (busyDate) {
-            throw new InvalidDateException("already busy date");
-        }
+        LocalDateTime aux = LocalDateTime.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), chosenDay, chosenHour, chosenMin);
+        LocalDateTime chosenDate = hoursAvailable.stream()
+                .filter(d -> d.getHour() == aux.getHour() && d.getMinute() == aux.getMinute() && d.getDayOfMonth() == aux.getDayOfMonth() && d.getMonth() == aux.getMonth())
+                .findFirst().orElseThrow(() -> new InvalidDateException("The chosen date must be a future day"));
 
         agendate.setClient(user);
+        agendate.setChosenDate(chosenDate);
+//        agendate.setOption();
 
         return agendateRepository.save(agendate);
     }
@@ -68,21 +75,27 @@ public class AgendateService {
     }
 
     @Transactional
-    public List<LocalDateTime> HoursAvailable(Integer chosenDay) {
+    public List<LocalDateTime> findHoursAvailableOfDay(Integer chosenDay) {
         LocalDate today = LocalDate.now();
-        LocalDateTime init = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 9, 0);
-        LocalTime start = LocalTime.of(9, 0);
-        LocalTime end = LocalTime.of(18, 0);
 
         LocalDate cD = LocalDate.of(today.getYear(), today.getMonth(), chosenDay);
 
-        List<LocalDateTime> chosenDates = HoursGenerator(init, start, end);
+        List<LocalDateTime> chosenDates = hoursAvailable;
         chosenDates = chosenDates.stream().filter(d -> d.toLocalDate().equals(cD)).collect(Collectors.toList());
 
         return chosenDates;
     }
 
-    public List<LocalDateTime> HoursGenerator(LocalDateTime init, LocalTime start, LocalTime end) {
+    public void generatorHoursAvailable() {
+        LocalDate today = LocalDate.now();
+        LocalDateTime init = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 9, 0);
+        LocalTime start = LocalTime.of(9, 0);
+        LocalTime end = LocalTime.of(18, 0);
+
+        HoursGenerator(init, start, end);
+    }
+
+    public void HoursGenerator(LocalDateTime init, LocalTime start, LocalTime end) {
 
         for (int i = 0; i <= 14; i++) {
             if (init.getDayOfWeek() != DayOfWeek.MONDAY && init.getDayOfWeek() != DayOfWeek.SUNDAY) {
@@ -95,6 +108,5 @@ public class AgendateService {
             }
             init = init.plusDays(1);
         }
-        return hoursAvailable;
     }
 }

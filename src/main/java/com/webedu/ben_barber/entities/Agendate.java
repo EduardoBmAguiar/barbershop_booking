@@ -5,7 +5,7 @@ import com.webedu.ben_barber.enums.AgendateStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_agendates")
@@ -23,7 +23,7 @@ public class Agendate {
     private Long id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
-    private Instant chosenDate;
+    private LocalDateTime chosenDate;
 
     private AgendateStatus status;
 

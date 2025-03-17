@@ -34,8 +34,12 @@ public class AgendateController {
     }
 
     @PostMapping(value = "/{id}")
-    public ResponseEntity<Agendate> addAgendate(@PathVariable Long id, @RequestBody Agendate agendate) {
-        agendate = agendateService.addAgendate(id, agendate);
+    public ResponseEntity<Agendate> addAgendate(@PathVariable Long id, @RequestBody Agendate agendate,
+                                                @RequestParam(value = "chosenDay") Integer chosenDay,
+                                                @RequestParam(value = "chosenHour") Integer chosenHour,
+                                                @RequestParam(value = "chosenMin", defaultValue = "00") Integer chosenMin) {
+
+        agendate = agendateService.addAgendate(id, agendate, chosenDay, chosenHour, chosenMin);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(agendate.getId()).toUri();
 
@@ -49,8 +53,8 @@ public class AgendateController {
     }
 
     @GetMapping(value = "/hoursForAgendate")
-    public ResponseEntity<List<LocalDateTime>> findAvailableHours(@RequestParam(value = "chosenDay", defaultValue = "null") Integer chosenDay) {
-        List<LocalDateTime> list = agendateService.HoursAvailable(chosenDay);
+    public ResponseEntity<List<LocalDateTime>> findAvailableHours(@RequestParam(value = "chosenDay") Integer chosenDay) {
+        List<LocalDateTime> list = agendateService.findHoursAvailableOfDay(chosenDay);
         return ResponseEntity.ok(list);
     }
  }
