@@ -28,11 +28,14 @@ public class Agendate {
     private AgendateStatus status;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long clientNum;
+    private Long idClient;
 
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Long idOption;
 
     @ManyToOne
     @JoinColumn(name = "option_id")

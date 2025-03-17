@@ -1,10 +1,12 @@
 package com.webedu.ben_barber.services;
 
 import com.webedu.ben_barber.entities.Agendate;
+import com.webedu.ben_barber.entities.Option;
 import com.webedu.ben_barber.entities.User;
 import com.webedu.ben_barber.exceptions.InvalidDateException;
 import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
 import com.webedu.ben_barber.repositories.AgendateRepository;
+import com.webedu.ben_barber.repositories.OptionRepository;
 import com.webedu.ben_barber.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,9 @@ public class AgendateService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    OptionRepository optionRepository;
 
     private final List<LocalDateTime> hoursAvailable;
 
@@ -49,7 +54,8 @@ public class AgendateService {
     @Transactional
     public Agendate addAgendate(Agendate agendate, LocalDateTime date) {
 
-        User user = userRepository.findById(agendate.getClientNum()).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+        User user = userRepository.findById(agendate.getIdClient()).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+        Option option = optionRepository.findById(agendate.getIdOption()).orElseThrow(() -> new ResourceNotFoundException("Option Not Found"));
 
         LocalDateTime chosenDate = hoursAvailable.stream()
                 .filter(d -> d.getHour() == date.getHour() && d.getMinute() == date.getMinute() && d.getDayOfMonth() == date.getDayOfMonth() && d.getMonth() == date.getMonth())
@@ -57,7 +63,7 @@ public class AgendateService {
 
         agendate.setClient(user);
         agendate.setChosenDate(chosenDate);
-//        agendate.setOption();
+        agendate.setOption(option);
 
         return agendateRepository.save(agendate);
     }
