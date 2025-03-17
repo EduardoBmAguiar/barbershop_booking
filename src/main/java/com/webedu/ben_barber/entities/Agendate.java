@@ -27,6 +27,7 @@ public class Agendate {
 
     private AgendateStatus status;
 
+    @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long idClient;
 
@@ -34,6 +35,7 @@ public class Agendate {
     @JoinColumn(name = "client_id")
     private User client;
 
+    @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long idOption;
 

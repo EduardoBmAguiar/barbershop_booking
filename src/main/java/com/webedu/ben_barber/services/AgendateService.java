@@ -59,12 +59,13 @@ public class AgendateService {
 
         LocalDateTime chosenDate = hoursAvailable.stream()
                 .filter(d -> d.getHour() == date.getHour() && d.getMinute() == date.getMinute() && d.getDayOfMonth() == date.getDayOfMonth() && d.getMonth() == date.getMonth())
-                .findFirst().orElseThrow(() -> new InvalidDateException("The chosen date must be a future day"));
+                .findFirst().orElseThrow(() -> new InvalidDateException("Date is not on our agenda"));
 
         agendate.setClient(user);
         agendate.setChosenDate(chosenDate);
         agendate.setOption(option);
 
+        hoursAvailable.remove(chosenDate);
         return agendateRepository.save(agendate);
     }
 
@@ -92,8 +93,7 @@ public class AgendateService {
     }
 
     public void generatorHoursAvailable() {
-        LocalDate today = LocalDate.now();
-        LocalDateTime init = LocalDateTime.of(today.getYear(), today.getMonth(), today.getDayOfMonth(), 9, 0);
+        LocalDateTime init = LocalDateTime.now();
         LocalTime start = LocalTime.of(9, 0);
         LocalTime end = LocalTime.of(18, 0);
 
