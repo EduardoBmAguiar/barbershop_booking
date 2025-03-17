@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_agendates")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -27,6 +26,8 @@ public class Agendate {
 
     private AgendateStatus status;
 
+    private Long clientNum;
+
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
@@ -34,4 +35,12 @@ public class Agendate {
     @ManyToOne
     @JoinColumn(name = "option_id")
     private Option option;
+
+    public Agendate(Long id, LocalDateTime chosenDate, AgendateStatus status, User client, Option option) {
+        this.id = id;
+        this.chosenDate = chosenDate;
+        this.status = status;
+        this.client = client;
+        this.option = option;
+    }
 }

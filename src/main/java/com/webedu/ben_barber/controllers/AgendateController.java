@@ -33,13 +33,10 @@ public class AgendateController {
         return ResponseEntity.ok(agendate);
     }
 
-    @PostMapping(value = "/{id}")
-    public ResponseEntity<Agendate> addAgendate(@PathVariable Long id, @RequestBody Agendate agendate,
-                                                @RequestParam(value = "chosenDay") Integer chosenDay,
-                                                @RequestParam(value = "chosenHour") Integer chosenHour,
-                                                @RequestParam(value = "chosenMin", defaultValue = "00") Integer chosenMin) {
+    @PostMapping
+    public ResponseEntity<Agendate> addAgendate(@RequestBody Agendate agendate) {
 
-        agendate = agendateService.addAgendate(id, agendate, chosenDay, chosenHour, chosenMin);
+        agendate = agendateService.addAgendate(agendate, agendate.getChosenDate());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(agendate.getId()).toUri();
 

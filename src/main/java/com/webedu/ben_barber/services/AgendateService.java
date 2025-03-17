@@ -47,13 +47,12 @@ public class AgendateService {
     }
 
     @Transactional
-    public Agendate addAgendate(Long id, Agendate agendate, Integer chosenDay, Integer chosenHour, Integer chosenMin) {
+    public Agendate addAgendate(Agendate agendate, LocalDateTime date) {
 
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+        User user = userRepository.findById(agendate.getClientNum()).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
 
-        LocalDateTime aux = LocalDateTime.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), chosenDay, chosenHour, chosenMin);
         LocalDateTime chosenDate = hoursAvailable.stream()
-                .filter(d -> d.getHour() == aux.getHour() && d.getMinute() == aux.getMinute() && d.getDayOfMonth() == aux.getDayOfMonth() && d.getMonth() == aux.getMonth())
+                .filter(d -> d.getHour() == date.getHour() && d.getMinute() == date.getMinute() && d.getDayOfMonth() == date.getDayOfMonth() && d.getMonth() == date.getMonth())
                 .findFirst().orElseThrow(() -> new InvalidDateException("The chosen date must be a future day"));
 
         agendate.setClient(user);
