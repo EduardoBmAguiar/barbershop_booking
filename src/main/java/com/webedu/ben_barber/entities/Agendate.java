@@ -1,6 +1,7 @@
 package com.webedu.ben_barber.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.webedu.ben_barber.enums.AgendateStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,6 +27,7 @@ public class Agendate {
 
     private AgendateStatus status;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long clientNum;
 
     @ManyToOne
