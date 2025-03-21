@@ -3,6 +3,9 @@ package com.webedu.ben_barber.controllers;
 import com.webedu.ben_barber.annotation.TrackExecutionTime;
 import com.webedu.ben_barber.entities.User;
 import com.webedu.ben_barber.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,11 @@ public class UserController {
     private UserService userService;
 
     @TrackExecutionTime
+    @Operation(description = "Está requizição faz o salvamento de um Usuário no banco de dados.", summary = "Realiza o salvamento de um Usuário", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Usuário criado"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
     @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user) {
         log.info("Adding user: initiated");
@@ -31,6 +39,8 @@ public class UserController {
     }
 
     @TrackExecutionTime
+    @Operation(description = "Está requisição faz a Atualização de um Usuário no banco de dados.", summary = "Realiza a atualização de um Usuário", method = "PUT")
+    @ApiResponse(responseCode = "200", description = "Usuário atualizado")
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Long id) {
         log.info("Updating user: initiated");
@@ -40,6 +50,8 @@ public class UserController {
     }
 
     @TrackExecutionTime
+    @Operation(description = "Está requisição faz A busca pelos Usuários já salvos no banco de dados.", summary = "Realiza a busca dos Usuários", method = "GET")
+    @ApiResponse(responseCode = "200", description = "Usuários Retornados")
     @GetMapping
     public ResponseEntity<List<User>> findAllUsers() {
         log.info("Finding all users: initiated");
@@ -49,6 +61,11 @@ public class UserController {
     }
 
     @TrackExecutionTime
+    @Operation(description = "Está requisição faz a busca por ID dos Usuários já salvos no banco de dados.", summary = "Realiza a busca dos Usuários por ID", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca Realizada."),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado.")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<User> findUserById(@PathVariable Long id) {
         log.info("Finding user by id: initiated");
@@ -58,6 +75,8 @@ public class UserController {
     }
 
     @TrackExecutionTime
+    @Operation(description = "Está requizição faz a deleção de um Usuário.", summary = "Realiza a deleção de um Usuário", method = "DELETE")
+    @ApiResponse(responseCode = "200", description = "Usuário deletado")
     @DeleteMapping("/{id}")
     public ResponseEntity<User> deleteUserById(@PathVariable Long id) {
         log.info("Deleting user by id: initiated");
