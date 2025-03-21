@@ -1,5 +1,6 @@
 package com.webedu.ben_barber.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class HoursAvailable {
 
@@ -30,6 +32,7 @@ public class HoursAvailable {
 
     public void HoursGenerator(LocalDateTime init, LocalTime start, LocalTime end) {
 
+        log.info("Generating hours available");
         for (int i = 0; i <= 14; i++) {
             if (init.getDayOfWeek() != DayOfWeek.MONDAY && init.getDayOfWeek() != DayOfWeek.SUNDAY) {
                 LocalDateTime current = LocalDateTime.of(init.toLocalDate(), start);
@@ -41,5 +44,6 @@ public class HoursAvailable {
             }
             init = init.plusDays(1);
         }
+        log.info("Generated hours available");
     }
 }
