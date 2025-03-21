@@ -3,6 +3,9 @@
  import com.webedu.ben_barber.annotation.TrackExecutionTime;
  import com.webedu.ben_barber.entities.Agendate;
  import com.webedu.ben_barber.services.AgendateService;
+ import io.swagger.v3.oas.annotations.Operation;
+ import io.swagger.v3.oas.annotations.responses.ApiResponse;
+ import io.swagger.v3.oas.annotations.responses.ApiResponses;
  import lombok.extern.slf4j.Slf4j;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.http.ResponseEntity;
@@ -22,6 +25,8 @@ public class AgendateController {
     AgendateService agendateService;
 
     @TrackExecutionTime
+    @Operation(description = "Está requisição faz A busca pelos Agendamentos já salvos no banco de dados.", summary = "Realiza a busca dos Agendamentos", method = "GET")
+    @ApiResponse(responseCode = "200", description = "Calculo Feito, e retornado")
     @GetMapping
     public ResponseEntity<List<Agendate>> findAllAgendates() {
         log.info("Finding all Agendates: initiated");
@@ -31,6 +36,11 @@ public class AgendateController {
     }
 
     @TrackExecutionTime
+    @Operation(description = "Está requisição faz a busca por ID dos Agendamentos já salvos no banco de dados.", summary = "Realiza a busca dos Agendamentos por ID", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca Realizada."),
+            @ApiResponse(responseCode = "404", description = "Agendamento não encontrado.")
+    })
     @GetMapping(value = "/{id}")
     public ResponseEntity<Agendate> findAgendateById(@PathVariable Long id) {
         log.info("finding Agendate by Id: initiated");
@@ -40,6 +50,11 @@ public class AgendateController {
     }
 
     @TrackExecutionTime
+    @Operation(description = "Está requizição faz o salvamento de um Agendamento no banco de dados.", summary = "Realiza o salvamento do Agendamento", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Agendamento criado"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
     @PostMapping
     public ResponseEntity<Agendate> addAgendate(@RequestBody Agendate agendate) {
         log.info("Adding Agendate: initiated");
@@ -51,6 +66,8 @@ public class AgendateController {
     }
 
     @TrackExecutionTime
+    @Operation(description = "Está requisição faz a Atualização de um Agendamento no banco de dados.", summary = "Realiza a atualização de um agendamento", method = "PUT")
+    @ApiResponse(responseCode = "200", description = "Agendamento atualizado")
     @PutMapping(value = "/{id}")
     public ResponseEntity<Agendate> updateAgendate(@PathVariable Long id, @RequestBody Agendate agendate) {
         log.info("updating Agendate: initiated");
@@ -60,6 +77,8 @@ public class AgendateController {
     }
 
     @TrackExecutionTime
+    @Operation(description = "Está requisição faz A busca pelos horários que há disponivel no dia escolhido.", summary = "Realiza a busca dos horários disponiveis", method = "GET")
+    @ApiResponse(responseCode = "200", description = "Horarios disponiveis retornado")
     @GetMapping(value = "/hoursForAgendate")
     public ResponseEntity<List<LocalDateTime>> findAvailableHours(@RequestParam(value = "chosenDay") Integer chosenDay) {
         log.info("findAvailableHours: initiated");
