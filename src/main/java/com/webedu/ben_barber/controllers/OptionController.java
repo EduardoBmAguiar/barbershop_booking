@@ -1,5 +1,6 @@
 package com.webedu.ben_barber.controllers;
 
+import com.webedu.ben_barber.annotation.TrackExecutionTime;
 import com.webedu.ben_barber.entities.Option;
 import com.webedu.ben_barber.services.OptionService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ public class OptionController {
     @Autowired
     private OptionService optionService;
 
+    @TrackExecutionTime
     @GetMapping
     public ResponseEntity<List<Option>> findAllOptions() {
         log.info("Finding all Options: initiated");
@@ -27,6 +29,7 @@ public class OptionController {
         return ResponseEntity.ok(options);
     }
 
+    @TrackExecutionTime
     @PostMapping
     public ResponseEntity<Option> addOption(@RequestBody Option option) {
         log.info("Adding Option: initiated");
@@ -36,6 +39,7 @@ public class OptionController {
         return ResponseEntity.created(uri).body(option);
     }
 
+    @TrackExecutionTime
     @PatchMapping(value = "/{id}/price")
     public ResponseEntity<Option> updatePrice(@PathVariable Long id, @RequestBody Option option) {
         log.info("Updating Price: initiated");
@@ -44,6 +48,7 @@ public class OptionController {
         return ResponseEntity.ok(option);
     }
 
+    @TrackExecutionTime
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Option> deleteOptionById(@PathVariable Long id) {
         log.info("Deleting Option by Id: initiated");

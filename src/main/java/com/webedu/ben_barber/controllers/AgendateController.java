@@ -1,5 +1,6 @@
  package com.webedu.ben_barber.controllers;
 
+ import com.webedu.ben_barber.annotation.TrackExecutionTime;
  import com.webedu.ben_barber.entities.Agendate;
  import com.webedu.ben_barber.services.AgendateService;
  import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ public class AgendateController {
     @Autowired
     AgendateService agendateService;
 
+    @TrackExecutionTime
     @GetMapping
     public ResponseEntity<List<Agendate>> findAllAgendates() {
         log.info("Finding all Agendates: initiated");
@@ -28,6 +30,7 @@ public class AgendateController {
         return ResponseEntity.ok(list);
     }
 
+    @TrackExecutionTime
     @GetMapping(value = "/{id}")
     public ResponseEntity<Agendate> findAgendateById(@PathVariable Long id) {
         log.info("finding Agendate by Id: initiated");
@@ -36,6 +39,7 @@ public class AgendateController {
         return ResponseEntity.ok(agendate);
     }
 
+    @TrackExecutionTime
     @PostMapping
     public ResponseEntity<Agendate> addAgendate(@RequestBody Agendate agendate) {
         log.info("Adding Agendate: initiated");
@@ -46,6 +50,7 @@ public class AgendateController {
         return ResponseEntity.created(uri).body(agendate);
     }
 
+    @TrackExecutionTime
     @PutMapping(value = "/{id}")
     public ResponseEntity<Agendate> updateAgendate(@PathVariable Long id, @RequestBody Agendate agendate) {
         log.info("updating Agendate: initiated");
@@ -54,6 +59,7 @@ public class AgendateController {
         return ResponseEntity.ok(agendate);
     }
 
+    @TrackExecutionTime
     @GetMapping(value = "/hoursForAgendate")
     public ResponseEntity<List<LocalDateTime>> findAvailableHours(@RequestParam(value = "chosenDay") Integer chosenDay) {
         log.info("findAvailableHours: initiated");

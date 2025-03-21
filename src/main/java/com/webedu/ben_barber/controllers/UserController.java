@@ -1,5 +1,6 @@
 package com.webedu.ben_barber.controllers;
 
+import com.webedu.ben_barber.annotation.TrackExecutionTime;
 import com.webedu.ben_barber.entities.User;
 import com.webedu.ben_barber.services.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @TrackExecutionTime
     @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user) {
         log.info("Adding user: initiated");
@@ -28,6 +30,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(user);
     }
 
+    @TrackExecutionTime
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Long id) {
         log.info("Updating user: initiated");
@@ -36,6 +39,7 @@ public class UserController {
         return ResponseEntity.ok(updateUser);
     }
 
+    @TrackExecutionTime
     @GetMapping
     public ResponseEntity<List<User>> findAllUsers() {
         log.info("Finding all users: initiated");
@@ -44,6 +48,7 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
+    @TrackExecutionTime
     @GetMapping("/{id}")
     public ResponseEntity<User> findUserById(@PathVariable Long id) {
         log.info("Finding user by id: initiated");
@@ -52,6 +57,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @TrackExecutionTime
     @DeleteMapping("/{id}")
     public ResponseEntity<User> deleteUserById(@PathVariable Long id) {
         log.info("Deleting user by id: initiated");
