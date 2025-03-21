@@ -26,7 +26,7 @@ public class AgendateController {
 
     @TrackExecutionTime
     @Operation(description = "Está requisição faz A busca pelos Agendamentos já salvos no banco de dados.", summary = "Realiza a busca dos Agendamentos", method = "GET")
-    @ApiResponse(responseCode = "200", description = "Calculo Feito, e retornado")
+    @ApiResponse(responseCode = "200", description = "Agendamentos Retornados")
     @GetMapping
     public ResponseEntity<List<Agendate>> findAllAgendates() {
         log.info("Finding all Agendates: initiated");
