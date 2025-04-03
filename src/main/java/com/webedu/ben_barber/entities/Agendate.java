@@ -37,13 +37,21 @@ public class Agendate {
 
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Long idBarber;
+
+    @ManyToOne
+    @JoinColumn(name = "barber_id")
+    private Barber barber;
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long idOption;
 
     @ManyToOne
     @JoinColumn(name = "option_id")
     private Option option;
 
-    public Agendate(Long id, LocalDateTime chosenDate, AgendateStatus status, Client client, Option option) {
+    public Agendate(Long id, LocalDateTime chosenDate, AgendateStatus status, Client client, Barber barber, Option option) {
         this.id = id;
         this.chosenDate = chosenDate;
         this.status = status;
