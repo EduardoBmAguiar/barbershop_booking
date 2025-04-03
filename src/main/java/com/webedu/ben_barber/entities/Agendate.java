@@ -1,12 +1,9 @@
 package com.webedu.ben_barber.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.webedu.ben_barber.enums.AgendateStatus;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_agendates")
@@ -22,8 +19,13 @@ public class Agendate {
     @SequenceGenerator(name = "agendate_seq", sequenceName = "agendate_seq", allocationSize = 1)
     private Long id;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
-    private LocalDateTime chosenDate;
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Long idDate;
+
+    @OneToOne
+    @JoinColumn(name = "hour_id")
+    private ScheduleHours scheduleHours;
 
     private AgendateStatus status;
 
@@ -51,11 +53,12 @@ public class Agendate {
     @JoinColumn(name = "option_id")
     private Option option;
 
-    public Agendate(Long id, LocalDateTime chosenDate, AgendateStatus status, Client client, Barber barber, Option option) {
+    public Agendate(Long id, ScheduleHours chosenDate, AgendateStatus status, Client client, Barber barber, Option option) {
         this.id = id;
-        this.chosenDate = chosenDate;
+        this.scheduleHours = chosenDate;
         this.status = status;
         this.client = client;
+        this.barber = barber;
         this.option = option;
     }
 }

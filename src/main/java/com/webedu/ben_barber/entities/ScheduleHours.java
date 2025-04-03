@@ -1,5 +1,6 @@
 package com.webedu.ben_barber.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,12 @@ import java.time.LocalTime;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class Hours {
+public class ScheduleHours {
+
+    public ScheduleHours(LocalDate date, LocalTime hour) {
+        this.date = date;
+        this.hourTime = hour;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hour_seq")
@@ -22,7 +28,9 @@ public class Hours {
     private Long id;
 
     private LocalDate date;
-    private LocalTime hour;
+
+    private LocalTime hourTime;
+
     private Boolean available = true;
 
     @ManyToOne
@@ -30,6 +38,10 @@ public class Hours {
     private Client client;
 
     @ManyToOne
-    @JoinColumn(name = "barber_id", nullable = false)
+    @JoinColumn(name = "barber_id")
     private Barber barber;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "scheduleHours")
+    private Agendate agendate;
 }

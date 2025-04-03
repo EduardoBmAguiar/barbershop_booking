@@ -2,6 +2,7 @@
 
  import com.webedu.ben_barber.annotation.TrackExecutionTime;
  import com.webedu.ben_barber.entities.Agendate;
+ import com.webedu.ben_barber.entities.ScheduleHours;
  import com.webedu.ben_barber.services.AgendateService;
  import io.swagger.v3.oas.annotations.Operation;
  import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,7 +14,6 @@
  import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
  import java.net.URI;
- import java.time.LocalDateTime;
  import java.util.List;
 
 @Slf4j
@@ -58,7 +58,7 @@ public class AgendateController {
     @PostMapping
     public ResponseEntity<Agendate> addAgendate(@RequestBody Agendate agendate) {
         log.info("Adding Agendate: initiated");
-        agendate = agendateService.addAgendate(agendate, agendate.getChosenDate());
+        agendate = agendateService.addAgendate(agendate);
         log.info("Adding Agendate: completed");
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(agendate.getId()).toUri();
 
@@ -80,9 +80,9 @@ public class AgendateController {
     @Operation(description = "Está requisição faz A busca pelos horários que há disponivel no dia escolhido.", summary = "Realiza a busca dos horários disponiveis", method = "GET")
     @ApiResponse(responseCode = "200", description = "Horarios disponiveis retornado")
     @GetMapping(value = "/hoursForAgendate")
-    public ResponseEntity<List<LocalDateTime>> findAvailableHours(@RequestParam(value = "chosenDay") Integer chosenDay) {
+    public ResponseEntity<List<ScheduleHours>> findAvailableHours(@RequestParam(value = "chosenDay") Integer chosenDay) {
         log.info("findAvailableHours: initiated");
-        List<LocalDateTime> list = agendateService.findHoursAvailableOfDay(chosenDay);
+        List<ScheduleHours> list = agendateService.findHoursAvailableOfDay(chosenDay);
         log.info("findAvailableHours: completed");
         return ResponseEntity.ok(list);
     }

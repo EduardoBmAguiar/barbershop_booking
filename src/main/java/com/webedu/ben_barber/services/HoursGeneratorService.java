@@ -1,5 +1,6 @@
 package com.webedu.ben_barber.services;
 
+import com.webedu.ben_barber.entities.ScheduleHours;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,10 @@ import java.util.List;
 public class HoursGeneratorService {
 
     @Autowired
-    public List<LocalDateTime> hoursAvailable;
+    public List<ScheduleHours> scheduleHoursAvailable;
 
     public HoursGeneratorService() {
-        this.hoursAvailable = new ArrayList<>();
+        this.scheduleHoursAvailable = new ArrayList<>();
         this.generatorHoursAvailable();
     }
 
@@ -38,7 +39,7 @@ public class HoursGeneratorService {
                 LocalDateTime current = LocalDateTime.of(init.toLocalDate(), start);
 
                 while (current.toLocalTime().isBefore(end)) {
-                    hoursAvailable.add(current);
+                    scheduleHoursAvailable.add(new ScheduleHours(current.toLocalDate(), LocalTime.of(current.getHour(), current.getMinute())));
                     current = current.plusMinutes(30);
                 }
             }
