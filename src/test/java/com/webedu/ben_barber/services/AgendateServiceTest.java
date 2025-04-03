@@ -1,13 +1,13 @@
 package com.webedu.ben_barber.services;
 
 import com.webedu.ben_barber.entities.Agendate;
+import com.webedu.ben_barber.entities.Client;
 import com.webedu.ben_barber.entities.Option;
-import com.webedu.ben_barber.entities.User;
 import com.webedu.ben_barber.exceptions.InvalidDateException;
 import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
 import com.webedu.ben_barber.repositories.AgendateRepository;
 import com.webedu.ben_barber.repositories.OptionRepository;
-import com.webedu.ben_barber.repositories.UserRepository;
+import com.webedu.ben_barber.repositories.ClientRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,28 +30,28 @@ class AgendateServiceTest {
     private AgendateRepository agendateRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private ClientRepository clientRepository;
 
     @Mock
     private OptionRepository optionRepository;
 
     @Mock
-    private HoursAvailable hoursAvailable;
+    private HoursGeneratorService hoursAvailable;
 
     @InjectMocks
     private AgendateService agendateService;
 
     private Agendate agendate;
-    private User user;
+    private Client client;
     private Option option;
     private LocalDateTime validDate;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        user = new User();
-        user.setId(1L);
-        user.setUsername("EduTest");
+        client = new Client();
+        client.setId(1L);
+        client.setName("EduTest");
 
         option = new Option();
         option.setId(1L);
@@ -59,7 +59,7 @@ class AgendateServiceTest {
 
         agendate = new Agendate();
         agendate.setId(1L);
-        agendate.setIdClient(user.getId());
+        agendate.setIdClient(client.getId());
         agendate.setIdOption(option.getId());
 
         validDate = LocalDateTime.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), LocalDate.now().plusDays(2).getDayOfMonth(), 9, 0);
@@ -71,7 +71,7 @@ class AgendateServiceTest {
     @DisplayName("Added agendate success")
     void addAgendateSuccess() {
 
-        when(userRepository.findById(agendate.getIdClient())).thenReturn(Optional.of(user));
+        when(clientRepository.findById(agendate.getIdClient())).thenReturn(Optional.of(client));
         when(optionRepository.findById(agendate.getIdOption())).thenReturn(Optional.of(option));
         when(agendateRepository.save(any(Agendate.class))).thenReturn(agendate);
 
@@ -80,23 +80,23 @@ class AgendateServiceTest {
         Agendate result = agendateService.addAgendate(agendate, validDate);
 
         assertNotNull(result);
-        assertEquals(user, result.getClient());
+        assertEquals(client, result.getClient());
         assertEquals(option, result.getOption());
         assertEquals(validDate, result.getChosenDate());
         verify(agendateRepository, times(1)).save(agendate);
     }
 
     @Test
-    @DisplayName("User Not Found")
+    @DisplayName("Client Not Found")
     void addAgendateUserNotFound() {
 
-        when(userRepository.findById(agendate.getIdClient())).thenReturn(Optional.empty());
+        when(clientRepository.findById(agendate.getIdClient())).thenReturn(Optional.empty());
 
         try {
             agendateService.addAgendate(agendate, validDate);
             fail("Should have launched ResourceNotFoundException");
         } catch (ResourceNotFoundException e) {
-            assertEquals("Resource not found: User Not Found", e.getMessage());
+            assertEquals("Resource not found: Client Not Found", e.getMessage());
         }
     }
 
@@ -104,7 +104,7 @@ class AgendateServiceTest {
     @DisplayName("Option Not Found")
     void testAddAgendateOptionNotFound() {
 
-        when(userRepository.findById(agendate.getIdClient())).thenReturn(Optional.of(user));
+        when(clientRepository.findById(agendate.getIdClient())).thenReturn(Optional.of(client));
         when(optionRepository.findById(agendate.getIdOption())).thenReturn(Optional.empty());
 
         try {
@@ -119,7 +119,7 @@ class AgendateServiceTest {
     @DisplayName("Date Unavailable")
     void testAddAgendateInvalidDate() {
 
-        when(userRepository.findById(agendate.getIdClient())).thenReturn(Optional.of(user));
+        when(clientRepository.findById(agendate.getIdClient())).thenReturn(Optional.of(client));
         when(optionRepository.findById(agendate.getIdOption())).thenReturn(Optional.of(option));
 
         try {

@@ -1,6 +1,6 @@
 package com.webedu.ben_barber.config;
 
-import com.webedu.ben_barber.services.HoursAvailable;
+import com.webedu.ben_barber.services.HoursGeneratorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,7 +12,7 @@ public class AppConfig {
 
     @Bean
     public List<LocalDateTime> hours() {
-        HoursAvailable hoursAvailable = new HoursAvailable();
+        HoursGeneratorService hoursAvailable = new HoursGeneratorService();
         return hoursAvailable.hoursAvailable;
     }
 }

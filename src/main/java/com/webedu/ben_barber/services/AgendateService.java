@@ -1,13 +1,13 @@
 package com.webedu.ben_barber.services;
 
 import com.webedu.ben_barber.entities.Agendate;
+import com.webedu.ben_barber.entities.Client;
 import com.webedu.ben_barber.entities.Option;
-import com.webedu.ben_barber.entities.User;
 import com.webedu.ben_barber.exceptions.InvalidDateException;
 import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
 import com.webedu.ben_barber.repositories.AgendateRepository;
 import com.webedu.ben_barber.repositories.OptionRepository;
-import com.webedu.ben_barber.repositories.UserRepository;
+import com.webedu.ben_barber.repositories.ClientRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,13 +26,13 @@ public class AgendateService {
     AgendateRepository agendateRepository;
 
     @Autowired
-    UserRepository userRepository;
+    ClientRepository clientRepository;
 
     @Autowired
     OptionRepository optionRepository;
 
     @Autowired
-    HoursAvailable hoursAvailable;
+    HoursGeneratorService hoursGeneratorService;
 
     @Transactional
     public List<Agendate> findAll() {
@@ -49,27 +49,27 @@ public class AgendateService {
 
     @Transactional
     public Agendate addAgendate(Agendate agendate, LocalDateTime date) {
-        log.info("Finding User by id");
-        User user = userRepository.findById(agendate.getIdClient()).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
-        log.info("User found");
+        log.info("Finding Client by id");
+        Client client = clientRepository.findById(agendate.getIdClient()).orElseThrow(() -> new ResourceNotFoundException("Client Not Found"));
+        log.info("Client found");
 
         log.info("Finding Option by id");
         Option option = optionRepository.findById(agendate.getIdOption()).orElseThrow(() -> new ResourceNotFoundException("Option Not Found"));
         log.info("Option found");
 
-        LocalDateTime chosenDate = hoursAvailable.hoursAvailable.stream()
+        LocalDateTime chosenDate = hoursGeneratorService.hoursAvailable.stream()
                 .filter(d -> d.getHour() == date.getHour() && d.getMinute() == date.getMinute() && d.getDayOfMonth() == date.getDayOfMonth() && d.getMonth() == date.getMonth())
                 .findFirst().orElseThrow(() -> new InvalidDateException("Date is not on our agenda"));
 
-        log.info("Added User in the agendate");
-        agendate.setClient(user);
+        log.info("Added Client in the agendate");
+        agendate.setClient(client);
         log.info("Added chosen Date in the agendate");
         agendate.setChosenDate(chosenDate);
         log.info("Added option in the agendate");
         agendate.setOption(option);
 
         log.info("Occupying the scheduled time");
-        hoursAvailable.hoursAvailable.remove(chosenDate);
+        hoursGeneratorService.hoursAvailable.remove(chosenDate);
         log.info("New agendate created");
         return agendateRepository.save(agendate);
     }
@@ -77,7 +77,7 @@ public class AgendateService {
     @Transactional
     public Agendate updateAgendate(Long id, Agendate agendate) {
         log.info("Finding if agendate exists");
-        Agendate newAgendate = agendateRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+        Agendate newAgendate = agendateRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Client Not Found"));
 
         log.info("checking if the Date has been changed");
         if (!(agendate.getChosenDate() == null)) { newAgendate.setChosenDate(agendate.getChosenDate()); }
@@ -95,7 +95,7 @@ public class AgendateService {
         LocalDate cD = LocalDate.of(today.getYear(), today.getMonth(), chosenDay);
 
         log.info("Finding hours available of chosen day");
-        List<LocalDateTime> chosenDates = hoursAvailable.hoursAvailable;
+        List<LocalDateTime> chosenDates = hoursGeneratorService.hoursAvailable;
         chosenDates = chosenDates.stream().filter(d -> d.toLocalDate().equals(cD)).collect(Collectors.toList());
 
         return chosenDates;

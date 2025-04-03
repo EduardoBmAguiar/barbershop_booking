@@ -10,27 +10,27 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "tb_users")
+@Table(name = "tb_clients")
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
-public class User {
+public class Client {
 
-    public User(Long id, String username, String email, String password) {
+    public Client(Long id, String username, String email, String password) {
         this.id = id;
-        this.username = username;
+        this.name = username;
         this.email = email;
         this.password = password;
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "client_seq")
+    @SequenceGenerator(name = "client_seq", sequenceName = "client_seq", allocationSize = 1)
     private Long id;
 
-    private String username;
+    private String name;
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

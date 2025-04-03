@@ -1,8 +1,8 @@
 package com.webedu.ben_barber.controllers;
 
 import com.webedu.ben_barber.annotation.TrackExecutionTime;
-import com.webedu.ben_barber.entities.User;
-import com.webedu.ben_barber.services.UserService;
+import com.webedu.ben_barber.entities.Client;
+import com.webedu.ben_barber.services.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,11 +17,11 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/clients")
+public class ClientController {
 
     @Autowired
-    private UserService userService;
+    private ClientService clientService;
 
     @TrackExecutionTime
     @Operation(description = "Está requizição faz o salvamento de um Usuário no banco de dados.", summary = "Realiza o salvamento de um Usuário", method = "POST")
@@ -30,32 +30,32 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User user) {
-        log.info("Adding user: initiated");
-        user = userService.addUser(user);
-        log.info("Adding user: completed");
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
-        return ResponseEntity.created(uri).body(user);
+    public ResponseEntity<Client> addUser(@RequestBody Client client) {
+        log.info("Adding client: initiated");
+        client = clientService.addUser(client);
+        log.info("Adding client: completed");
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(client.getId()).toUri();
+        return ResponseEntity.created(uri).body(client);
     }
 
     @TrackExecutionTime
     @Operation(description = "Está requisição faz a Atualização de um Usuário no banco de dados.", summary = "Realiza a atualização de um Usuário", method = "PUT")
     @ApiResponse(responseCode = "200", description = "Usuário atualizado")
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Long id) {
-        log.info("Updating user: initiated");
-        User updateUser = userService.updateUser(id, user);
-        log.info("Updating user: completed");
-        return ResponseEntity.ok(updateUser);
+    public ResponseEntity<Client> updateUser(@RequestBody Client client, @PathVariable Long id) {
+        log.info("Updating client: initiated");
+        Client updateClient = clientService.updateUser(id, client);
+        log.info("Updating client: completed");
+        return ResponseEntity.ok(updateClient);
     }
 
     @TrackExecutionTime
     @Operation(description = "Está requisição faz A busca pelos Usuários já salvos no banco de dados.", summary = "Realiza a busca dos Usuários", method = "GET")
     @ApiResponse(responseCode = "200", description = "Usuários Retornados")
     @GetMapping
-    public ResponseEntity<List<User>> findAllUsers() {
+    public ResponseEntity<List<Client>> findAllUsers() {
         log.info("Finding all users: initiated");
-        List<User> list = userService.findAllUsers();
+        List<Client> list = clientService.findAllUsers();
         log.info("Finding all users: completed");
         return ResponseEntity.ok(list);
     }
@@ -67,20 +67,20 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado.")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<User> findUserById(@PathVariable Long id) {
-        log.info("Finding user by id: initiated");
-        User user = userService.findById(id);
-        log.info("Finding user by id: completed");
-        return ResponseEntity.ok(user);
+    public ResponseEntity<Client> findUserById(@PathVariable Long id) {
+        log.info("Finding client by id: initiated");
+        Client client = clientService.findById(id);
+        log.info("Finding client by id: completed");
+        return ResponseEntity.ok(client);
     }
 
     @TrackExecutionTime
     @Operation(description = "Está requizição faz a deleção de um Usuário.", summary = "Realiza a deleção de um Usuário", method = "DELETE")
     @ApiResponse(responseCode = "200", description = "Usuário deletado")
     @DeleteMapping("/{id}")
-    public ResponseEntity<User> deleteUserById(@PathVariable Long id) {
+    public ResponseEntity<Client> deleteUserById(@PathVariable Long id) {
         log.info("Deleting user by id: initiated");
-        userService.delete(id);
+        clientService.delete(id);
         log.info("Deleting user by id: completed");
         return ResponseEntity.noContent().build();
     }

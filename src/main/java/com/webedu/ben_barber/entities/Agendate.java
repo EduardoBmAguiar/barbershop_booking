@@ -33,7 +33,7 @@ public class Agendate {
 
     @ManyToOne
     @JoinColumn(name = "client_id")
-    private User client;
+    private Client client;
 
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -43,7 +43,7 @@ public class Agendate {
     @JoinColumn(name = "option_id")
     private Option option;
 
-    public Agendate(Long id, LocalDateTime chosenDate, AgendateStatus status, User client, Option option) {
+    public Agendate(Long id, LocalDateTime chosenDate, AgendateStatus status, Client client, Option option) {
         this.id = id;
         this.chosenDate = chosenDate;
         this.status = status;

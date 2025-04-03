@@ -12,12 +12,12 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class HoursAvailable {
+public class HoursGeneratorService {
 
     @Autowired
     public List<LocalDateTime> hoursAvailable;
 
-    public HoursAvailable() {
+    public HoursGeneratorService() {
         this.hoursAvailable = new ArrayList<>();
         this.generatorHoursAvailable();
     }
