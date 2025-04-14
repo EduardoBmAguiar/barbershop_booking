@@ -10,9 +10,9 @@ import java.util.List;
 @Configuration
 public class AppConfig {
 
-    @Bean
-    public List<ScheduleHours> hours() {
-        HoursGeneratorService hoursAvailable = new HoursGeneratorService();
-        return hoursAvailable.scheduleHoursAvailable;
-    }
+//    @Bean
+//    public List<ScheduleHours> hours() {
+//        HoursGeneratorService hoursAvailable = new HoursGeneratorService();
+//        return hoursAvailable.hoursRepository.findAll();
+//    }
 }

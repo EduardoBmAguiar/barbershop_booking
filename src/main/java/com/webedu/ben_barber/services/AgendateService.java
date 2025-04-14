@@ -1,15 +1,8 @@
 package com.webedu.ben_barber.services;
 
-import com.webedu.ben_barber.entities.Agendate;
-import com.webedu.ben_barber.entities.Client;
-import com.webedu.ben_barber.entities.ScheduleHours;
-import com.webedu.ben_barber.entities.Option;
-import com.webedu.ben_barber.exceptions.InvalidDateException;
+import com.webedu.ben_barber.entities.*;
 import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
-import com.webedu.ben_barber.repositories.AgendateRepository;
-import com.webedu.ben_barber.repositories.HoursRepository;
-import com.webedu.ben_barber.repositories.OptionRepository;
-import com.webedu.ben_barber.repositories.ClientRepository;
+import com.webedu.ben_barber.repositories.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,10 +23,10 @@ public class AgendateService {
     ClientRepository clientRepository;
 
     @Autowired
-    OptionRepository optionRepository;
+    BarberRepository barberRepository;
 
     @Autowired
-    HoursGeneratorService hoursGeneratorService;
+    OptionRepository optionRepository;
 
     @Autowired
     HoursRepository hoursRepository;
@@ -61,22 +54,30 @@ public class AgendateService {
         Option option = optionRepository.findById(agendate.getIdOption()).orElseThrow(() -> new ResourceNotFoundException("Option Not Found"));
         log.info("Option found");
 
-        ScheduleHours chosenDate = hoursGeneratorService.scheduleHoursAvailable.stream()
-                .filter(d -> d.getHourTime().getHour() == agendate.getScheduleHours().getHourTime().getHour()
-                        && d.getHourTime().getMinute() == agendate.getScheduleHours().getHourTime().getMinute()
-                        && d.getDate().getDayOfMonth() == agendate.getScheduleHours().getDate().getDayOfMonth()
-                        && d.getDate().getMonth() == agendate.getScheduleHours().getDate().getMonth())
-                .findFirst().orElseThrow(() -> new InvalidDateException("Date is not on our agenda"));
+        log.info("Finding Barber by id");
+        Barber barber = barberRepository.findById(agendate.getIdBarber()).orElseThrow(() -> new ResourceNotFoundException("Barber Not Found"));
+        log.info("Barber found");
+
+        log.info("Finding Date by id");
+        ScheduleHours scheduleHours = hoursRepository.findById(agendate.getIdDate()).orElseThrow(() -> new ResourceNotFoundException("Date Not Found"));
+        log.info("Date found");
+
+//        ScheduleHours chosenDate = hoursRepository.findByDateAndHourTime(
+//                agendate.getScheduleHours().getDate(),
+//                agendate.getScheduleHours().getHourTime())
+//                .orElseThrow(() -> new InvalidDateException("Date is not on our agenda"));
 
         log.info("Added Client in the agendate");
         agendate.setClient(client);
         log.info("Added chosen Date in the agendate");
-        agendate.setScheduleHours(chosenDate);
+        agendate.setScheduleHours(scheduleHours);
         log.info("Added option in the agendate");
         agendate.setOption(option);
+        log.info("Added Barber in the agendate");
+        agendate.setBarber(barber);
 
         log.info("Occupying the scheduled time");
-        hoursGeneratorService.scheduleHoursAvailable.remove(chosenDate);
+        hoursRepository.findById(scheduleHours.getId()).get().setAvailable(false);
         log.info("New agendate created");
         return agendateRepository.save(agendate);
     }
@@ -102,7 +103,7 @@ public class AgendateService {
         LocalDate cD = LocalDate.of(today.getYear(), today.getMonth(), chosenDay);
 
         log.info("Finding hours available of chosen day");
-        List<ScheduleHours> chosenDates = hoursGeneratorService.scheduleHoursAvailable;
+        List<ScheduleHours> chosenDates = hoursRepository.findAll();
         chosenDates = chosenDates.stream().filter(d -> d.getDate().getDayOfMonth() == cD.getDayOfMonth()).collect(Collectors.toList());
 
         return chosenDates;
