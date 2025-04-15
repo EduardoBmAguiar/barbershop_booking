@@ -33,14 +33,6 @@ public class ScheduleHours {
 
     private Boolean available = true;
 
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private Client client;
-
-    @ManyToOne
-    @JoinColumn(name = "barber_id")
-    private Barber barber;
-
     @JsonIgnore
     @OneToOne(mappedBy = "scheduleHours")
     private Agendate agendate;
