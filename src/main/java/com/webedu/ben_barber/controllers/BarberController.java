@@ -24,9 +24,9 @@ public class BarberController {
     private BarberService barberService;
 
     @TrackExecutionTime
-    @Operation(description = "Está requizição faz o salvamento de um Usuário no banco de dados.", summary = "Realiza o salvamento de um Usuário", method = "POST")
+    @Operation(description = "Está requizição faz o salvamento de um Barbeiro no banco de dados.", summary = "Realiza o salvamento de um Barbeiro", method = "POST")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Usuário criado"),
+            @ApiResponse(responseCode = "201", description = "Barbeiro criado"),
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
     @PostMapping
@@ -39,8 +39,8 @@ public class BarberController {
     }
 
     @TrackExecutionTime
-    @Operation(description = "Está requisição faz a Atualização de um Usuário no banco de dados.", summary = "Realiza a atualização de um Usuário", method = "PUT")
-    @ApiResponse(responseCode = "200", description = "Usuário atualizado")
+    @Operation(description = "Está requisição faz a Atualização de um Barbeiro no banco de dados.", summary = "Realiza a atualização de um Barbeiro", method = "PUT")
+    @ApiResponse(responseCode = "200", description = "Barbeiro atualizado")
     @PutMapping("/{id}")
     public ResponseEntity<Barber> updateUser(@RequestBody Barber barber, @PathVariable Long id) {
         log.info("Updating barber: initiated");
@@ -50,21 +50,21 @@ public class BarberController {
     }
 
     @TrackExecutionTime
-    @Operation(description = "Está requisição faz A busca pelos Usuários já salvos no banco de dados.", summary = "Realiza a busca dos Usuários", method = "GET")
+    @Operation(description = "Está requisição faz A busca pelos Barbeiro já salvos no banco de dados.", summary = "Realiza a busca dos Barbeiros", method = "GET")
     @ApiResponse(responseCode = "200", description = "Usuários Retornados")
     @GetMapping
     public ResponseEntity<List<Barber>> findAllUsers() {
-        log.info("Finding all users: initiated");
+        log.info("Finding all barbers: initiated");
         List<Barber> list = barberService.findAllUsers();
-        log.info("Finding all users: completed");
+        log.info("Finding all barbers: completed");
         return ResponseEntity.ok(list);
     }
 
     @TrackExecutionTime
-    @Operation(description = "Está requisição faz a busca por ID dos Usuários já salvos no banco de dados.", summary = "Realiza a busca dos Usuários por ID", method = "GET")
+    @Operation(description = "Está requisição faz a busca por ID dos Barbeiros já salvos no banco de dados.", summary = "Realiza a busca dos Barbeiros por ID", method = "GET")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca Realizada."),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado.")
+            @ApiResponse(responseCode = "404", description = "Barbeiro não encontrado.")
     })
     @GetMapping("/{id}")
     public ResponseEntity<Barber> findUserById(@PathVariable Long id) {
