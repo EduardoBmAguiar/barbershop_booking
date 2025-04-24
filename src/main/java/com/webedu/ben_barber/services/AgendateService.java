@@ -97,15 +97,15 @@ public class AgendateService {
     }
 
     @Transactional
-    public List<ScheduleHours> findHoursAvailableOfDay(Integer chosenDay) {
+    public List<ScheduleHours> findHoursAvailableOfDay(Long barberId, Integer chosenDay) {
         LocalDate today = LocalDate.now();
+        LocalDate chosenDate = LocalDate.of(today.getYear(), today.getMonth(), chosenDay);
 
-        LocalDate cD = LocalDate.of(today.getYear(), today.getMonth(), chosenDay);
+        log.info("Finding hours available for barber {} on {}", barberId, chosenDate);
+        List<ScheduleHours> hours = hoursRepository.findByBarberIdAndDate(barberId, chosenDate);
 
-        log.info("Finding hours available of chosen day");
-        List<ScheduleHours> chosenDates = hoursRepository.findAll();
-        chosenDates = chosenDates.stream().filter(d -> d.getDate().getDayOfMonth() == cD.getDayOfMonth()).collect(Collectors.toList());
-
-        return chosenDates;
+        return hours.stream()
+                .filter(ScheduleHours::getAvailable)
+                .collect(Collectors.toList());
     }
 }

@@ -80,9 +80,11 @@ public class AgendateController {
     @Operation(description = "Está requisição faz A busca pelos horários que há disponivel no dia escolhido.", summary = "Realiza a busca dos horários disponiveis", method = "GET")
     @ApiResponse(responseCode = "200", description = "Horarios disponiveis retornado")
     @GetMapping(value = "/hoursForAgendate")
-    public ResponseEntity<List<ScheduleHours>> findAvailableHours(@RequestParam(value = "chosenDay") Integer chosenDay) {
+    public ResponseEntity<List<ScheduleHours>> findAvailableHours(@RequestParam(value = "barberId") Long barberId,
+                                                                  @RequestParam(value = "chosenDay") Integer chosenDay
+    ) {
         log.info("findAvailableHours: initiated");
-        List<ScheduleHours> list = agendateService.findHoursAvailableOfDay(chosenDay);
+        List<ScheduleHours> list = agendateService.findHoursAvailableOfDay(barberId, chosenDay);
         log.info("findAvailableHours: completed");
         return ResponseEntity.ok(list);
     }

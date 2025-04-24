@@ -36,4 +36,8 @@ public class ScheduleHours {
     @JsonIgnore
     @OneToOne(mappedBy = "scheduleHours")
     private Agendate agendate;
+
+    @ManyToOne
+    @JoinColumn(name = "barber_id")
+    private Barber barber;
 }
