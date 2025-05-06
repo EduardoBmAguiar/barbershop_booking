@@ -1,22 +1,22 @@
 package com.webedu.ben_barber.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.webedu.ben_barber.enums.AgendateStatus;
+import com.webedu.ben_barber.enums.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "tb_agendates")
+@Table(name = "tb_appointment")
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
-public class Agendate {
+public class Appointment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "agendate_seq")
-    @SequenceGenerator(name = "agendate_seq", sequenceName = "agendate_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appointment_seq")
+    @SequenceGenerator(name = "appointment_seq", sequenceName = "appointment_seq", allocationSize = 1)
     private Long id;
 
     @Transient
@@ -27,7 +27,8 @@ public class Agendate {
     @JoinColumn(name = "hour_id")
     private ScheduleHours scheduleHours;
 
-    private AgendateStatus status;
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus status = com.webedu.ben_barber.enums.AppointmentStatus.MARKED;
 
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -53,7 +54,7 @@ public class Agendate {
     @JoinColumn(name = "option_id")
     private Option option;
 
-    public Agendate(Long id, ScheduleHours chosenDate, AgendateStatus status, Client client, Barber barber, Option option) {
+    public Appointment(Long id, ScheduleHours chosenDate, AppointmentStatus status, Client client, Barber barber, Option option) {
         this.id = id;
         this.scheduleHours = chosenDate;
         this.status = status;

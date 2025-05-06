@@ -1,6 +1,6 @@
 package com.webedu.ben_barber.enums;
 
-public enum AgendateStatus {
+public enum AppointmentStatus {
     MARKED,
     WAITINGPAYMENT,
     PAYED,

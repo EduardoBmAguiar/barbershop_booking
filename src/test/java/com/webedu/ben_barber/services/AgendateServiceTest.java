@@ -1,33 +1,11 @@
 package com.webedu.ben_barber.services;
 
-import com.webedu.ben_barber.entities.Agendate;
-import com.webedu.ben_barber.entities.Client;
-import com.webedu.ben_barber.entities.Option;
-import com.webedu.ben_barber.exceptions.InvalidDateException;
-import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
-import com.webedu.ben_barber.repositories.AgendateRepository;
-import com.webedu.ben_barber.repositories.OptionRepository;
-import com.webedu.ben_barber.repositories.ClientRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class AgendateServiceTest {
 
 //    @Mock
-//    private AgendateRepository agendateRepository;
+//    private AppointmentRepository agendateRepository;
 //
 //    @Mock
 //    private ClientRepository clientRepository;
@@ -39,9 +17,9 @@ class AgendateServiceTest {
 //    private HoursGeneratorService scheduleHoursAvailable;
 //
 //    @InjectMocks
-//    private AgendateService agendateService;
+//    private AppointmentService agendateService;
 //
-//    private Agendate agendate;
+//    private Appointment agendate;
 //    private Client client;
 //    private Option option;
 //    private LocalDateTime validDate;
@@ -57,7 +35,7 @@ class AgendateServiceTest {
 //        option.setId(1L);
 //        option.setName("Barba");
 //
-//        agendate = new Agendate();
+//        agendate = new Appointment();
 //        agendate.setId(1L);
 //        agendate.setIdClient(client.getId());
 //        agendate.setIdOption(option.getId());
@@ -73,11 +51,11 @@ class AgendateServiceTest {
 //
 //        when(clientRepository.findById(agendate.getIdClient())).thenReturn(Optional.of(client));
 //        when(optionRepository.findById(agendate.getIdOption())).thenReturn(Optional.of(option));
-//        when(agendateRepository.save(any(Agendate.class))).thenReturn(agendate);
+//        when(agendateRepository.save(any(Appointment.class))).thenReturn(agendate);
 //
 ////        scheduleHoursAvailable.scheduleHoursAvailable.add(validDate);
 //
-////        Agendate result = agendateService.addAgendate(agendate, validDate);
+////        Appointment result = agendateService.addAgendate(agendate, validDate);
 //
 ////        assertNotNull(result);
 ////        assertEquals(client, result.getClient());
