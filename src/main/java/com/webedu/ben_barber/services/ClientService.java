@@ -21,54 +21,54 @@ public class ClientService {
     private ClientRepository clientRepository;
 
     @Transactional
-    public Client addUser(Client client) {
+    public Client addClient(Client client) {
         log.info("New Client created");
         return clientRepository.save(client);
     }
 
     @Transactional
-    public Client updateUser(Long id, Client client) {
+    public Client updateClient(Long id, Client client) {
         log.info("Finding client by Id");
-        Optional<Client> userOptional = clientRepository.findById(id);
-        log.info("Client found");
+        Client clientToUpdate = clientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+
         log.info("Updating Client");
-        if (userOptional.isPresent()) {
-            Client clientToUpdate = userOptional.get();
+        updateFields(client, clientToUpdate);
+        log.info("Client updated");
 
-            if (!(client.getName() == null)) { clientToUpdate.setName(client.getName()); }
-            if (!(client.getEmail() == null)) { clientToUpdate.setEmail(client.getEmail()); }
-            if (!(client.getPassword() == null)) { clientToUpdate.setPassword(client.getPassword()); }
-
-            log.info("Client updated");
-            return clientRepository.save(clientToUpdate);
-        } else {
-            throw new RuntimeException("Client not found");
-        }
+        return clientRepository.save(clientToUpdate);
     }
 
     @Transactional
-    public List<Client> findAllUsers() {
-        log.info("Finding all users");
+    public List<Client> findAllClients() {
+        log.info("Finding all clients");
         return clientRepository.findAll();
     }
 
     @Transactional
-    public Client findById(Long id) {
-        log.info("Finding user by Id");
+    public Client findClientById(Long id) {
+        log.info("Finding client by Id");
         Optional<Client> userOptional = clientRepository.findById(id);
         log.info("Client found");
         return userOptional.orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
     @Transactional
-    public void delete(Long id) {
-        log.info("Deleting user by Id");
-        clientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+    public void deleteClient(Long id) {
+        log.info("Deleting client by Id");
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
         try {
-            clientRepository.deleteById(id);
+            clientRepository.delete(client);
         } catch (DataIntegrityViolationException e) {
-            log.error("Integrity violation");
+            log.error("Integrity violation while deleting client {}", id);
             throw new DatabaseException(e.getMessage());
         }
+    }
+
+    private void updateFields(Client source, Client target) {
+        if (source.getName() != null) { target.setName(source.getName()); }
+        if (source.getEmail() != null) { target.setEmail(source.getEmail()); }
+        if (source.getPassword() != null) { target.setPassword(source.getPassword()); }
     }
 }
