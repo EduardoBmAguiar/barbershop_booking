@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -21,54 +22,54 @@ public class BarberService {
     private BarberRepository barberRepository;
 
     @Transactional
-    public Barber addUser(Barber barber) {
+    public Barber addBarber(Barber barber) {
         log.info("New Barber created");
         return barberRepository.save(barber);
     }
 
     @Transactional
-    public Barber updateUser(Long id, Barber barber) {
+    public Barber updateBarber(Long id, Barber barber) {
         log.info("Finding barber by Id");
-        Optional<Barber> userOptional = barberRepository.findById(id);
+        Barber barberToUpdate = findBarberOrThrow(id);
         log.info("Barber found");
+
         log.info("Updating Barber");
-        if (userOptional.isPresent()) {
-            Barber barberToUpdate = userOptional.get();
+        if (Objects.nonNull(barber.getName())) { barberToUpdate.setName(barber.getName()); }
+        if (Objects.nonNull(barber.getEmail())) { barberToUpdate.setEmail(barber.getEmail()); }
+        if (Objects.nonNull(barber.getPassword())) { barberToUpdate.setPassword(barber.getPassword()); }
 
-            if (!(barber.getName() == null)) { barberToUpdate.setName(barber.getName()); }
-            if (!(barber.getEmail() == null)) { barberToUpdate.setEmail(barber.getEmail()); }
-            if (!(barber.getPassword() == null)) { barberToUpdate.setPassword(barber.getPassword()); }
-
-            log.info("Barber updated");
+        log.info("Barber updated");
             return barberRepository.save(barberToUpdate);
-        } else {
-            throw new RuntimeException("Barber not found");
-        }
     }
 
     @Transactional
-    public List<Barber> findAllUsers() {
-        log.info("Finding all users");
+    public List<Barber> findAllBarbers() {
+        log.info("Finding all barbers");
         return barberRepository.findAll();
     }
 
     @Transactional
-    public Barber findById(Long id) {
-        log.info("Finding user by Id");
-        Optional<Barber> userOptional = barberRepository.findById(id);
+    public Barber findBarberById(Long id) {
+        log.info("Finding barber by Id");
+        Barber barber = findBarberOrThrow(id);
         log.info("Barber found");
-        return userOptional.orElseThrow(() -> new ResourceNotFoundException(id));
+        return barber;
     }
 
     @Transactional
-    public void delete(Long id) {
-        log.info("Deleting user by Id");
-        barberRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+    public void deleteBarber(Long id) {
+        log.info("Deleting barber by Id");
+        findBarberOrThrow(id);
         try {
             barberRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
             log.error("Integrity violation");
             throw new DatabaseException(e.getMessage());
         }
+    }
+
+    private Barber findBarberOrThrow(Long id) {
+        return barberRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
     }
 }
