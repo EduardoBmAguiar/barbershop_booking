@@ -14,5 +14,5 @@ public interface HoursRepository extends JpaRepository<ScheduleHours, Long> {
 
     Optional<ScheduleHours> findByDateAndHourTime(LocalDate date, LocalTime hourTime);
 
-    List<ScheduleHours> findByBarberIdAndDate(Long barberId, LocalDate date);
+    List<ScheduleHours> findByBarberIdAndDateAndAvailableTrue(Long barberId, LocalDate date);
 }
