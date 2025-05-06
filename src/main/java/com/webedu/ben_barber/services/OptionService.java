@@ -24,7 +24,6 @@ public class OptionService {
         return optionRepository.save(option);
     }
 
-    @Transactional
     public List<Option> findAllOptions() {
         log.info("Finding all Options in repository");
         return optionRepository.findAll();
@@ -32,25 +31,25 @@ public class OptionService {
 
     @Transactional
     public Option updatePrice(Long id, Option newPrice) {
-        log.info("Finding Option by id");
-        Option option = optionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Id Not Found"));
-        log.info("Option Found");
-        log.info("Updating Option price");
+        log.info("Updating price for Option with id: {}", id);
+        Option option = optionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Option with id " + id + " not found"));
+
         option.setPrice(newPrice.getPrice());
-        log.info("New Option price updated");
+        log.info("Price updated to: {}", newPrice.getPrice());
         return optionRepository.save(option);
     }
 
     public void deleteOption(Long id) {
-        log.info("Finding Option by id");
-        Option option = optionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Id Not Found"));
-        log.info("Option Found");
-        log.info("Deleting Option");
+        log.info("Attempting to delete Option with id: {}", id);
+        Option option = optionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Option with id " + id + " not found"));
+
         try {
             optionRepository.deleteById(id);
+            log.info("Option with id {} deleted successfully", id);
         } catch (DataIntegrityViolationException e) {
-            option.setName("Option Removed");
-            optionRepository.save(option);
+            log.warn("Could not delete Option with id {} due to data integrity violation: {}", id, e.getMessage());
         }
     }
 }

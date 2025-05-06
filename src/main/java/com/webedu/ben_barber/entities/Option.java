@@ -2,6 +2,8 @@ package com.webedu.ben_barber.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -28,11 +30,13 @@ public class Option {
     @SequenceGenerator(name = "options_seq", sequenceName = "options", allocationSize = 1)
     private Long id;
 
+    @NotBlank
     private String name;
 
+    @NotNull
     private BigDecimal price;
 
     @JsonIgnore
     @OneToMany(mappedBy = "option")
-    private List<Agendate> agendate = new ArrayList<>();
+    private List<Appointment> appointment = new ArrayList<>();
 }
