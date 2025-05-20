@@ -1,6 +1,8 @@
 package com.webedu.ben_barber.controllers;
 
 import com.webedu.ben_barber.annotation.TrackExecutionTime;
+import com.webedu.ben_barber.dto.ClientDTO;
+import com.webedu.ben_barber.dto.ClientMapper;
 import com.webedu.ben_barber.entities.Client;
 import com.webedu.ben_barber.services.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,13 +10,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -34,34 +36,35 @@ public class ClientController {
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
     @PostMapping
-    public ResponseEntity<Client> addClient(@Valid @RequestBody Client client) {
+    public ResponseEntity<ClientDTO> addClient(@Valid @RequestBody ClientDTO dto) {
         log.info("Adding client: initiated");
-        client = clientService.addClient(client);
+        Client client = clientService.addClient(ClientMapper.toEntity(dto));
         log.info("Adding client: completed");
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(client.getId()).toUri();
-        return ResponseEntity.created(uri).body(client);
+        return ResponseEntity.created(uri).body(ClientMapper.toDTO(client));
     }
 
     @TrackExecutionTime
     @Operation(description = "Esta requisição faz a Atualização de um Cliente no banco de dados.", summary = "Realiza a atualização de um Cliente", method = "PUT")
     @ApiResponse(responseCode = "200", description = "Cliente atualizado")
     @PutMapping("/{id}")
-    public ResponseEntity<Client> updateClient(@RequestBody Client client, @PathVariable Long id) {
+    public ResponseEntity<ClientDTO> updateClient(@RequestBody ClientDTO dto, @PathVariable Long id) {
         log.info("Updating client: initiated");
-        Client updateClient = clientService.updateClient(id, client);
+        Client updateClient = clientService.updateClient(id, ClientMapper.toEntity(dto));
         log.info("Updating client: completed");
-        return ResponseEntity.ok(updateClient);
+        return ResponseEntity.ok(ClientMapper.toDTO(updateClient));
     }
 
     @TrackExecutionTime
     @Operation(description = "Esta requisição faz A busca pelos Clientes já salvos no banco de dados.", summary = "Realiza a busca dos Clientes", method = "GET")
     @ApiResponse(responseCode = "200", description = "Clientes Retornados")
     @GetMapping
-    public ResponseEntity<List<Client>> findAllClients() {
+    public ResponseEntity<List<ClientDTO>> findAllClients() {
         log.info("Finding all users: initiated");
-        List<Client> list = clientService.findAllClients();
+        List<Client> clients = clientService.findAllClients();
+        List<ClientDTO> dtoList = clients.stream().map(ClientMapper::toDTO).collect(Collectors.toList());
         log.info("Finding all users: completed");
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(dtoList);
     }
 
     @TrackExecutionTime
@@ -71,11 +74,11 @@ public class ClientController {
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Client> findClientById(@PathVariable Long id) {
+    public ResponseEntity<ClientDTO> findClientById(@PathVariable Long id) {
         log.info("Finding client by id: initiated");
         Client client = clientService.findClientById(id);
         log.info("Finding client by id: completed");
-        return ResponseEntity.ok(client);
+        return ResponseEntity.ok(ClientMapper.toDTO(client));
     }
 
     @TrackExecutionTime
