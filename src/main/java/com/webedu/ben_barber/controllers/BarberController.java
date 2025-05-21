@@ -1,7 +1,10 @@
 package com.webedu.ben_barber.controllers;
 
 import com.webedu.ben_barber.annotation.TrackExecutionTime;
+import com.webedu.ben_barber.dto.barber.BarberRequestDTO;
+import com.webedu.ben_barber.dto.barber.BarberResponseDTO;
 import com.webedu.ben_barber.entities.Barber;
+import com.webedu.ben_barber.mapper.barber.BarberMapper;
 import com.webedu.ben_barber.services.BarberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,34 +36,35 @@ public class BarberController {
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
     @PostMapping
-    public ResponseEntity<Barber> addBarber(@Valid @RequestBody Barber barber) {
+    public ResponseEntity<BarberResponseDTO> addBarber(@Valid @RequestBody BarberRequestDTO dto) {
         log.info("Adding barber: initiated");
-        barber = barberService.addBarber(barber);
+        Barber barber = barberService.addBarber(BarberMapper.toEntity(dto));
         log.info("Adding barber: completed");
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(barber.getId()).toUri();
-        return ResponseEntity.created(uri).body(barber);
+        return ResponseEntity.created(uri).body(BarberMapper.toDTO(barber));
     }
 
     @TrackExecutionTime
     @Operation(description = "Esta requisição faz a Atualização de um Barbeiro no banco de dados.", summary = "Realiza a atualização de um Barbeiro", method = "PUT")
     @ApiResponse(responseCode = "200", description = "Barbeiro atualizado")
     @PutMapping("/{id}")
-    public ResponseEntity<Barber> updateBarber(@RequestBody Barber barber, @PathVariable Long id) {
+    public ResponseEntity<BarberResponseDTO> updateBarber(@RequestBody BarberRequestDTO dto, @PathVariable Long id) {
         log.info("Updating barber: initiated");
-        Barber updateBarber = barberService.updateBarber(id, barber);
+        Barber updateBarber = barberService.updateBarber(id, BarberMapper.toEntity(dto));
         log.info("Updating barber: completed");
-        return ResponseEntity.ok(updateBarber);
+        return ResponseEntity.ok(BarberMapper.toDTO(updateBarber));
     }
 
     @TrackExecutionTime
     @Operation(description = "Esta requisição faz A busca pelos Barbeiro já salvos no banco de dados.", summary = "Realiza a busca dos Barbeiros", method = "GET")
     @ApiResponse(responseCode = "200", description = "Usuários Retornados")
     @GetMapping
-    public ResponseEntity<List<Barber>> findAllBarbers() {
+    public ResponseEntity<List<BarberResponseDTO>> findAllBarbers() {
         log.info("Finding all barbers: initiated");
-        List<Barber> list = barberService.findAllBarbers();
+        List<Barber> barbers = barberService.findAllBarbers();
+        List<BarberResponseDTO> dtoList = barbers.stream().map(BarberMapper::toDTO).toList();
         log.info("Finding all barbers: completed");
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(dtoList);
     }
 
     @TrackExecutionTime
@@ -70,11 +74,11 @@ public class BarberController {
             @ApiResponse(responseCode = "404", description = "Barbeiro não encontrado.")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Barber> findBarberById(@PathVariable Long id) {
+    public ResponseEntity<BarberResponseDTO> findBarberById(@PathVariable Long id) {
         log.info("Finding barber by id: initiated");
         Barber barber = barberService.findBarberById(id);
         log.info("Finding barber by id: completed");
-        return ResponseEntity.ok(barber);
+        return ResponseEntity.ok(BarberMapper.toDTO(barber));
     }
 
     @TrackExecutionTime
