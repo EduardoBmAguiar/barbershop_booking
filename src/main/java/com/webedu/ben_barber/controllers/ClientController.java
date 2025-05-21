@@ -1,9 +1,10 @@
 package com.webedu.ben_barber.controllers;
 
 import com.webedu.ben_barber.annotation.TrackExecutionTime;
-import com.webedu.ben_barber.dto.ClientDTO;
-import com.webedu.ben_barber.dto.ClientMapper;
+import com.webedu.ben_barber.dto.client.ClientRequestDTO;
+import com.webedu.ben_barber.dto.client.ClientResponseDTO;
 import com.webedu.ben_barber.entities.Client;
+import com.webedu.ben_barber.mapper.client.ClientMapper;
 import com.webedu.ben_barber.services.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,7 +37,7 @@ public class ClientController {
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
     @PostMapping
-    public ResponseEntity<ClientDTO> addClient(@Valid @RequestBody ClientDTO dto) {
+    public ResponseEntity<ClientResponseDTO> addClient(@Valid @RequestBody ClientRequestDTO dto) {
         log.info("Adding client: initiated");
         Client client = clientService.addClient(ClientMapper.toEntity(dto));
         log.info("Adding client: completed");
@@ -48,7 +49,7 @@ public class ClientController {
     @Operation(description = "Esta requisição faz a Atualização de um Cliente no banco de dados.", summary = "Realiza a atualização de um Cliente", method = "PUT")
     @ApiResponse(responseCode = "200", description = "Cliente atualizado")
     @PutMapping("/{id}")
-    public ResponseEntity<ClientDTO> updateClient(@RequestBody ClientDTO dto, @PathVariable Long id) {
+    public ResponseEntity<ClientResponseDTO> updateClient(@RequestBody ClientRequestDTO dto, @PathVariable Long id) {
         log.info("Updating client: initiated");
         Client updateClient = clientService.updateClient(id, ClientMapper.toEntity(dto));
         log.info("Updating client: completed");
@@ -59,10 +60,10 @@ public class ClientController {
     @Operation(description = "Esta requisição faz A busca pelos Clientes já salvos no banco de dados.", summary = "Realiza a busca dos Clientes", method = "GET")
     @ApiResponse(responseCode = "200", description = "Clientes Retornados")
     @GetMapping
-    public ResponseEntity<List<ClientDTO>> findAllClients() {
+    public ResponseEntity<List<ClientResponseDTO>> findAllClients() {
         log.info("Finding all users: initiated");
         List<Client> clients = clientService.findAllClients();
-        List<ClientDTO> dtoList = clients.stream().map(ClientMapper::toDTO).collect(Collectors.toList());
+        List<ClientResponseDTO> dtoList = clients.stream().map(ClientMapper::toDTO).collect(Collectors.toList());
         log.info("Finding all users: completed");
         return ResponseEntity.ok(dtoList);
     }
@@ -74,7 +75,7 @@ public class ClientController {
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ClientDTO> findClientById(@PathVariable Long id) {
+    public ResponseEntity<ClientResponseDTO> findClientById(@PathVariable Long id) {
         log.info("Finding client by id: initiated");
         Client client = clientService.findClientById(id);
         log.info("Finding client by id: completed");

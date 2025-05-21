@@ -1,7 +1,7 @@
 package com.webedu.ben_barber.config;
 
 import com.webedu.ben_barber.entities.*;
-import com.webedu.ben_barber.enums.AgendateStatus;
+import com.webedu.ben_barber.enums.AppointmentStatus;
 import com.webedu.ben_barber.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -21,7 +21,7 @@ public class TestConfig implements CommandLineRunner {
     ClientRepository clientRepository;
 
     @Autowired
-    AgendateRepository agendateRepository;
+    AppointmentRepository appointmentRepository;
 
     @Autowired
     OptionRepository optionRepository;
@@ -47,14 +47,14 @@ public class TestConfig implements CommandLineRunner {
         ScheduleHours h2 = new ScheduleHours(LocalDate.of(2025, 4, 15), LocalTime.of(15, 0));
         hoursRepository.saveAll(Arrays.asList(h1, h2));
 
-        Agendate a1 = new Agendate(null, h1, AgendateStatus.MARKED, u1, b2, o1);
-        Agendate a2 = new Agendate(null, h2, AgendateStatus.PAYED, u2, b1, o2);
+        Appointment a1 = new Appointment(null, h1, AppointmentStatus.MARKED, u1, b2, o1);
+        Appointment a2 = new Appointment(null, h2, com.webedu.ben_barber.enums.AppointmentStatus.PAYED, u2, b1, o2);
 
 
         barberRepository.saveAll(Arrays.asList(b1, b2));
         clientRepository.saveAll(Arrays.asList(u1, u2));
         optionRepository.saveAll(Arrays.asList(o1, o2));
-        agendateRepository.saveAll(Arrays.asList(a1, a2));
+        appointmentRepository.saveAll(Arrays.asList(a1, a2));
 
     }
 }
