@@ -1,8 +1,13 @@
  package com.webedu.ben_barber.controllers;
 
  import com.webedu.ben_barber.annotation.TrackExecutionTime;
+ import com.webedu.ben_barber.dto.appointment.AppointmentRequestDTO;
+ import com.webedu.ben_barber.dto.appointment.AppointmentResponseDTO;
+ import com.webedu.ben_barber.dto.schedulehours.ScheduleHoursResponseDTO;
  import com.webedu.ben_barber.entities.Appointment;
  import com.webedu.ben_barber.entities.ScheduleHours;
+ import com.webedu.ben_barber.mapper.appointment.AppointmentMapper;
+ import com.webedu.ben_barber.mapper.schedulehours.ScheduleHoursMapper;
  import com.webedu.ben_barber.services.AppointmentService;
  import io.swagger.v3.oas.annotations.Operation;
  import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,7 +21,7 @@
  import java.net.URI;
  import java.util.List;
 
-@Slf4j
+ @Slf4j
 @RestController
 @RequestMapping("/appointments")
 public class AppointmentController {
@@ -31,11 +36,12 @@ public class AppointmentController {
     @Operation(description = "Esta requisição faz A busca pelos Agendamentos já salvos no banco de dados.", summary = "Realiza a busca dos Agendamentos", method = "GET")
     @ApiResponse(responseCode = "200", description = "Agendamentos Retornados")
     @GetMapping
-    public ResponseEntity<List<Appointment>> findAllAgendates() {
+    public ResponseEntity<List<AppointmentResponseDTO>> findAllAgendates() {
         log.info("Finding all Appointments: initiated");
-        List<Appointment> list = appointmentService.findAll();
+        List<Appointment> appointments = appointmentService.findAll();
+        List<AppointmentResponseDTO> dtoList = appointments.stream().map(AppointmentMapper::toDTO).toList();
         log.info("Finding all Appointments: completed");
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(dtoList);
     }
 
     @TrackExecutionTime
@@ -45,11 +51,11 @@ public class AppointmentController {
             @ApiResponse(responseCode = "404", description = "Agendamento não encontrado.")
     })
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Appointment> findAgendateById(@PathVariable Long id) {
+    public ResponseEntity<AppointmentResponseDTO> findAgendateById(@PathVariable Long id) {
         log.info("Find Appointment by ID: initiated");
         Appointment appointment = appointmentService.findById(id);
         log.info("Find Appointment by ID: completed");
-        return ResponseEntity.ok(appointment);
+        return ResponseEntity.ok(AppointmentMapper.toDTO(appointment));
     }
 
     @TrackExecutionTime
@@ -59,36 +65,37 @@ public class AppointmentController {
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
     @PostMapping
-    public ResponseEntity<Appointment> addAgendate(@Valid @RequestBody Appointment appointment) {
+    public ResponseEntity<AppointmentResponseDTO> addAgendate(@Valid @RequestBody AppointmentRequestDTO dto) {
         log.info("Adding Appointment: initiated");
-        appointment = appointmentService.addAppointment(appointment);
+        Appointment appointment = appointmentService.addAppointment(AppointmentMapper.toEntity(dto));
         log.info("Adding Appointment: completed");
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(appointment.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(appointment);
+        return ResponseEntity.created(uri).body(AppointmentMapper.toDTO(appointment));
     }
 
     @TrackExecutionTime
     @Operation(description = "Esta requisição faz a Atualização de um Agendamento no banco de dados.", summary = "Realiza a atualização de um agendamento", method = "PUT")
     @ApiResponse(responseCode = "200", description = "Agendamento atualizado")
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Appointment> updateAgendate(@PathVariable Long id, @RequestBody Appointment appointment) {
+    public ResponseEntity<AppointmentResponseDTO> updateAgendate(@PathVariable Long id, @RequestBody AppointmentRequestDTO dto) {
         log.info("Updating Appointment: initiated");
-        appointment = appointmentService.updateAppointment(id, appointment);
+        Appointment appointment = appointmentService.updateAppointment(id, AppointmentMapper.toEntity(dto));
         log.info("Updating Appointment: completed");
-        return ResponseEntity.ok(appointment);
+        return ResponseEntity.ok(AppointmentMapper.toDTO(appointment));
     }
 
     @TrackExecutionTime
     @Operation(description = "Esta requisição faz A busca pelos horários que há disponivel no dia escolhido.", summary = "Realiza a busca dos horários disponiveis", method = "GET")
     @ApiResponse(responseCode = "200", description = "Horarios disponiveis retornado")
     @GetMapping(value = "/available-hours")
-    public ResponseEntity<List<ScheduleHours>> findAvailableHours(@RequestParam(value = "barberId") Long barberId,
-                                                                  @RequestParam(value = "chosenDay") Integer chosenDay
+    public ResponseEntity<List<ScheduleHoursResponseDTO>> findAvailableHours(@RequestParam(value = "barberId") Long barberId,
+                                                                             @RequestParam(value = "chosenDay") Integer chosenDay
     ) {
         log.info("FindAvailableHours: initiated");
-        List<ScheduleHours> list = appointmentService.findHoursAvailableOfDay(barberId, chosenDay);
+        List<ScheduleHours> hours = appointmentService.findHoursAvailableOfDay(barberId, chosenDay);
+        List<ScheduleHoursResponseDTO> dtoList = hours.stream().map(ScheduleHoursMapper::toDTO).toList();
         log.info("FindAvailableHours: completed");
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(dtoList);
     }
  }

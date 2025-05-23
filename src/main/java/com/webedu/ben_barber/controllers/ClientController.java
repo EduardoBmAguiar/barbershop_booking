@@ -17,7 +17,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -63,7 +62,7 @@ public class ClientController {
     public ResponseEntity<List<ClientResponseDTO>> findAllClients() {
         log.info("Finding all users: initiated");
         List<Client> clients = clientService.findAllClients();
-        List<ClientResponseDTO> dtoList = clients.stream().map(ClientMapper::toDTO).collect(Collectors.toList());
+        List<ClientResponseDTO> dtoList = clients.stream().map(ClientMapper::toDTO).toList();
         log.info("Finding all users: completed");
         return ResponseEntity.ok(dtoList);
     }
