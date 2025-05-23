@@ -1,7 +1,10 @@
 package com.webedu.ben_barber.controllers;
 
 import com.webedu.ben_barber.annotation.TrackExecutionTime;
+import com.webedu.ben_barber.dto.option.OptionRequestDTO;
+import com.webedu.ben_barber.dto.option.OptionResponseDTO;
 import com.webedu.ben_barber.entities.Option;
+import com.webedu.ben_barber.mapper.option.OptionMapper;
 import com.webedu.ben_barber.services.OptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,11 +33,12 @@ public class OptionController {
     @Operation(description = "Está requisição faz A busca pelas Opções já salvas no banco de dados.", summary = "Realiza a busca das Opções", method = "GET")
     @ApiResponse(responseCode = "200", description = "Opções retornadas")
     @GetMapping
-    public ResponseEntity<List<Option>> findAllOptions() {
+    public ResponseEntity<List<OptionResponseDTO>> findAllOptions() {
         log.info("Finding all Options: initiated");
         List<Option> options = optionService.findAllOptions();
+        List<OptionResponseDTO> dtoList = options.stream().map(OptionMapper::toDTO).toList();
         log.info("Finding all Options: completed");
-        return ResponseEntity.ok(options);
+        return ResponseEntity.ok(dtoList);
     }
 
     @TrackExecutionTime
@@ -44,23 +48,23 @@ public class OptionController {
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
     @PostMapping
-    public ResponseEntity<Option> addOption(@Valid @RequestBody Option option) {
+    public ResponseEntity<OptionResponseDTO> addOption(@Valid @RequestBody OptionRequestDTO dto) {
         log.info("Adding Option: initiated");
-        option = optionService.addOptions(option);
+        Option option = optionService.addOptions(OptionMapper.toEntity(dto));
         log.info("Adding Option: completed");
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(option.getId()).toUri();
-        return ResponseEntity.created(uri).body(option);
+        return ResponseEntity.created(uri).body(OptionMapper.toDTO(option));
     }
 
     @TrackExecutionTime
     @Operation(description = "Está requisição faz a Atualização do preço de uma Opção.", summary = "Realiza a atualização de um preço", method = "PATCH")
     @ApiResponse(responseCode = "200", description = "Preço atualizado")
     @PatchMapping(value = "/{id}/price")
-    public ResponseEntity<Option> updatePrice(@PathVariable Long id, @RequestBody Option option) {
+    public ResponseEntity<OptionResponseDTO> updatePrice(@PathVariable Long id, @RequestBody OptionRequestDTO dto) {
         log.info("Updating Price: initiated");
-        option = optionService.updatePrice(id, option);
+        Option option = optionService.updatePrice(id, OptionMapper.toEntity(dto));
         log.info("Updating Price: completed");
-        return ResponseEntity.ok(option);
+        return ResponseEntity.ok(OptionMapper.toDTO(option));
     }
 
     @TrackExecutionTime
