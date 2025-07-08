@@ -1,8 +1,10 @@
 package com.webedu.ben_barber.services;
 
+import com.webedu.ben_barber.dto.client.ClientRequestDTO;
 import com.webedu.ben_barber.entities.Client;
 import com.webedu.ben_barber.exceptions.DatabaseException;
 import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
+import com.webedu.ben_barber.mapper.client.ClientMapper;
 import com.webedu.ben_barber.repositories.ClientRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +22,23 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private ClientMapper clientMapper;
+
     @Transactional
-    public Client addClient(Client client) {
+    public Client addClient(ClientRequestDTO client) {
         log.info("New Client created");
-        return clientRepository.save(client);
+        return clientRepository.save(clientMapper.toEntity(client));
     }
 
     @Transactional
-    public Client updateClient(Long id, Client client) {
+    public Client updateClient(Long id, ClientRequestDTO dto) {
         log.info("Finding client by Id");
         Client clientToUpdate = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
 
         log.info("Updating Client");
-        updateFields(client, clientToUpdate);
+        updateFields(clientMapper.toEntity(dto), clientToUpdate);
         log.info("Client updated");
 
         return clientRepository.save(clientToUpdate);

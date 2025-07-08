@@ -23,12 +23,12 @@ public class Appointment {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long idDate;
 
-    @OneToOne
-    @JoinColumn(name = "hour_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "schedule_hours_id", referencedColumnName = "id", nullable = false)
     private ScheduleHours scheduleHours;
 
     @Enumerated(EnumType.STRING)
-    private AppointmentStatus status = com.webedu.ben_barber.enums.AppointmentStatus.MARKED;
+    private AppointmentStatus status = com.webedu.ben_barber.enums.AppointmentStatus.SCHEDULED;
 
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface HoursRepository extends JpaRepository<ScheduleHours, Long> {
 
-    Optional<ScheduleHours> findByDateAndHourTime(LocalDate date, LocalTime hourTime);
-
     List<ScheduleHours> findByBarberIdAndDateAndAvailableTrue(Long barberId, LocalDate date);
+
+    Optional<ScheduleHours> findByBarberIdAndDateAndHourTime(Long barberId, LocalDate date, LocalTime hourTime);
 }

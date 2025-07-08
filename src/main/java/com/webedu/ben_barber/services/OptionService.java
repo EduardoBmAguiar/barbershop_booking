@@ -1,7 +1,9 @@
 package com.webedu.ben_barber.services;
 
+import com.webedu.ben_barber.dto.option.OptionRequestDTO;
 import com.webedu.ben_barber.entities.Option;
 import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
+import com.webedu.ben_barber.mapper.option.OptionMapper;
 import com.webedu.ben_barber.repositories.OptionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,14 @@ public class OptionService {
     @Autowired
     private OptionRepository optionRepository;
 
+    @Autowired
+    private OptionMapper optionMapper;
+
     @Transactional
-    public Option addOptions(Option option) {
+    public Option addOptions(OptionRequestDTO dto) {
+        Option entity = optionMapper.toEntity(dto);
         log.info("New Option created");
-        return optionRepository.save(option);
+        return optionRepository.save(entity);
     }
 
     public List<Option> findAllOptions() {
@@ -30,10 +36,12 @@ public class OptionService {
     }
 
     @Transactional
-    public Option updatePrice(Long id, Option newPrice) {
+    public Option updatePrice(Long id, OptionRequestDTO dto) {
         log.info("Updating price for Option with id: {}", id);
         Option option = optionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Option with id " + id + " not found"));
+
+        Option newPrice = optionMapper.toEntity(dto);
 
         option.setPrice(newPrice.getPrice());
         log.info("Price updated to: {}", newPrice.getPrice());

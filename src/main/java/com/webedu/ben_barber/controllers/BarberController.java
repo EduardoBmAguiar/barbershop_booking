@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,9 +25,12 @@ import java.util.List;
 public class BarberController {
 
     private final BarberService barberService;
+    private final BarberMapper barberMapper;
 
-    public BarberController(BarberService barberService) {
+    @Autowired
+    public BarberController(BarberService barberService, BarberMapper barberMapper) {
         this.barberService = barberService;
+        this.barberMapper = barberMapper;
     }
 
     @TrackExecutionTime
@@ -38,10 +42,10 @@ public class BarberController {
     @PostMapping
     public ResponseEntity<BarberResponseDTO> addBarber(@Valid @RequestBody BarberRequestDTO dto) {
         log.info("Adding barber: initiated");
-        Barber barber = barberService.addBarber(BarberMapper.toEntity(dto));
+        Barber createdBarber = barberService.addBarber(dto);
         log.info("Adding barber: completed");
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(barber.getId()).toUri();
-        return ResponseEntity.created(uri).body(BarberMapper.toDTO(barber));
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(createdBarber.getId()).toUri();
+        return ResponseEntity.created(uri).body(barberMapper.toDTO(createdBarber));
     }
 
     @TrackExecutionTime
@@ -50,9 +54,9 @@ public class BarberController {
     @PutMapping("/{id}")
     public ResponseEntity<BarberResponseDTO> updateBarber(@RequestBody BarberRequestDTO dto, @PathVariable Long id) {
         log.info("Updating barber: initiated");
-        Barber updateBarber = barberService.updateBarber(id, BarberMapper.toEntity(dto));
+        Barber updateBarber = barberService.updateBarber(id, dto);
         log.info("Updating barber: completed");
-        return ResponseEntity.ok(BarberMapper.toDTO(updateBarber));
+        return ResponseEntity.ok(barberMapper.toDTO(updateBarber));
     }
 
     @TrackExecutionTime
@@ -62,7 +66,7 @@ public class BarberController {
     public ResponseEntity<List<BarberResponseDTO>> findAllBarbers() {
         log.info("Finding all barbers: initiated");
         List<Barber> barbers = barberService.findAllBarbers();
-        List<BarberResponseDTO> dtoList = barbers.stream().map(BarberMapper::toDTO).toList();
+        List<BarberResponseDTO> dtoList = barbers.stream().map(barberMapper::toDTO).toList();
         log.info("Finding all barbers: completed");
         return ResponseEntity.ok(dtoList);
     }
@@ -78,7 +82,7 @@ public class BarberController {
         log.info("Finding barber by id: initiated");
         Barber barber = barberService.findBarberById(id);
         log.info("Finding barber by id: completed");
-        return ResponseEntity.ok(BarberMapper.toDTO(barber));
+        return ResponseEntity.ok(barberMapper.toDTO(barber));
     }
 
     @TrackExecutionTime

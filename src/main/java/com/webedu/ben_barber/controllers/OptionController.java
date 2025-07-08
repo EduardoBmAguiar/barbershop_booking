@@ -24,9 +24,11 @@ import java.util.List;
 public class OptionController {
 
     private final OptionService optionService;
+    private final OptionMapper optionMapper;
 
-    public OptionController(OptionService optionService) {
+    public OptionController(OptionService optionService, OptionMapper optionMapper) {
         this.optionService = optionService;
+        this.optionMapper = optionMapper;
     }
 
     @TrackExecutionTime
@@ -36,7 +38,7 @@ public class OptionController {
     public ResponseEntity<List<OptionResponseDTO>> findAllOptions() {
         log.info("Finding all Options: initiated");
         List<Option> options = optionService.findAllOptions();
-        List<OptionResponseDTO> dtoList = options.stream().map(OptionMapper::toDTO).toList();
+        List<OptionResponseDTO> dtoList = options.stream().map(optionMapper::toDTO).toList();
         log.info("Finding all Options: completed");
         return ResponseEntity.ok(dtoList);
     }
@@ -50,10 +52,10 @@ public class OptionController {
     @PostMapping
     public ResponseEntity<OptionResponseDTO> addOption(@Valid @RequestBody OptionRequestDTO dto) {
         log.info("Adding Option: initiated");
-        Option option = optionService.addOptions(OptionMapper.toEntity(dto));
+        Option option = optionService.addOptions(dto);
         log.info("Adding Option: completed");
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(option.getId()).toUri();
-        return ResponseEntity.created(uri).body(OptionMapper.toDTO(option));
+        return ResponseEntity.created(uri).body(optionMapper.toDTO(option));
     }
 
     @TrackExecutionTime
@@ -62,9 +64,9 @@ public class OptionController {
     @PatchMapping(value = "/{id}/price")
     public ResponseEntity<OptionResponseDTO> updatePrice(@PathVariable Long id, @RequestBody OptionRequestDTO dto) {
         log.info("Updating Price: initiated");
-        Option option = optionService.updatePrice(id, OptionMapper.toEntity(dto));
+        Option option = optionService.updatePrice(id,dto);
         log.info("Updating Price: completed");
-        return ResponseEntity.ok(OptionMapper.toDTO(option));
+        return ResponseEntity.ok(optionMapper.toDTO(option));
     }
 
     @TrackExecutionTime

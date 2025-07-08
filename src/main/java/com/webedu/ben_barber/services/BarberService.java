@@ -1,8 +1,10 @@
 package com.webedu.ben_barber.services;
 
+import com.webedu.ben_barber.dto.barber.BarberRequestDTO;
 import com.webedu.ben_barber.entities.Barber;
 import com.webedu.ben_barber.exceptions.DatabaseException;
 import com.webedu.ben_barber.exceptions.ResourceNotFoundException;
+import com.webedu.ben_barber.mapper.barber.BarberMapper;
 import com.webedu.ben_barber.repositories.BarberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,25 +21,32 @@ public class BarberService {
     @Autowired
     private BarberRepository barberRepository;
 
+    @Autowired
+    private BarberMapper barberMapper;
+
     @Transactional
-    public Barber addBarber(Barber barber) {
+    public Barber addBarber(BarberRequestDTO dto) {
         log.info("New Barber created");
-        return barberRepository.save(barber);
+        Barber entity = barberMapper.toEntity(dto);
+        return barberRepository.save(entity);
     }
 
     @Transactional
-    public Barber updateBarber(Long id, Barber barber) {
+    public Barber updateBarber(Long id, BarberRequestDTO dto) {
         log.info("Finding barber by Id");
-        Barber barberToUpdate = findBarberOrThrow(id);
+        Barber existingBarber = barberRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Barber with id " + id + " not found"));
         log.info("Barber found");
 
         log.info("Updating Barber");
-        if (Objects.nonNull(barber.getName())) { barberToUpdate.setName(barber.getName()); }
-        if (Objects.nonNull(barber.getEmail())) { barberToUpdate.setEmail(barber.getEmail()); }
-        if (Objects.nonNull(barber.getPassword())) { barberToUpdate.setPassword(barber.getPassword()); }
+        existingBarber.setName(dto.name());
+        existingBarber.setEmail(dto.email());
+
+        if (dto.password() != null && !dto.password().isBlank()) {
+            existingBarber.setPassword(dto.password()); // Lembre-se de aplicar o HASH aqui!
+        }
 
         log.info("Barber updated");
-            return barberRepository.save(barberToUpdate);
+            return barberRepository.save(existingBarber);
     }
 
     @Transactional

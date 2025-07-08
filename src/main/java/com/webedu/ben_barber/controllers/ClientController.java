@@ -25,8 +25,11 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    public ClientController(ClientService clientService) {
+    private final ClientMapper clientMapper;
+
+    public ClientController(ClientService clientService, ClientMapper clientMapper) {
         this.clientService = clientService;
+        this.clientMapper = clientMapper;
     }
 
     @TrackExecutionTime
@@ -38,10 +41,10 @@ public class ClientController {
     @PostMapping
     public ResponseEntity<ClientResponseDTO> addClient(@Valid @RequestBody ClientRequestDTO dto) {
         log.info("Adding client: initiated");
-        Client client = clientService.addClient(ClientMapper.toEntity(dto));
+        Client client = clientService.addClient(dto);
         log.info("Adding client: completed");
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(client.getId()).toUri();
-        return ResponseEntity.created(uri).body(ClientMapper.toDTO(client));
+        return ResponseEntity.created(uri).body(clientMapper.toDTO(client));
     }
 
     @TrackExecutionTime
@@ -50,9 +53,9 @@ public class ClientController {
     @PutMapping("/{id}")
     public ResponseEntity<ClientResponseDTO> updateClient(@RequestBody ClientRequestDTO dto, @PathVariable Long id) {
         log.info("Updating client: initiated");
-        Client updateClient = clientService.updateClient(id, ClientMapper.toEntity(dto));
+        Client updateClient = clientService.updateClient(id, dto);
         log.info("Updating client: completed");
-        return ResponseEntity.ok(ClientMapper.toDTO(updateClient));
+        return ResponseEntity.ok(clientMapper.toDTO(updateClient));
     }
 
     @TrackExecutionTime
@@ -62,7 +65,7 @@ public class ClientController {
     public ResponseEntity<List<ClientResponseDTO>> findAllClients() {
         log.info("Finding all users: initiated");
         List<Client> clients = clientService.findAllClients();
-        List<ClientResponseDTO> dtoList = clients.stream().map(ClientMapper::toDTO).toList();
+        List<ClientResponseDTO> dtoList = clients.stream().map(clientMapper::toDTO).toList();
         log.info("Finding all users: completed");
         return ResponseEntity.ok(dtoList);
     }
@@ -78,7 +81,7 @@ public class ClientController {
         log.info("Finding client by id: initiated");
         Client client = clientService.findClientById(id);
         log.info("Finding client by id: completed");
-        return ResponseEntity.ok(ClientMapper.toDTO(client));
+        return ResponseEntity.ok(clientMapper.toDTO(client));
     }
 
     @TrackExecutionTime
