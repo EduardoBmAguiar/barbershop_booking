@@ -25,13 +25,13 @@ public class ScheduleManagementController {
     private ScheduleManagementService scheduleManagementService;
 
     @PutMapping("/barbers/{barberId}/working-hours")
-    public ResponseEntity<Void> setWorkingHours(@PathVariable Long barberId, @RequestBody WorkingHoursRequestDTO dto) {
+    public ResponseEntity<Void> setWorkingHours(@PathVariable Long barberId, @Valid @RequestBody WorkingHoursRequestDTO dto) {
         scheduleManagementService.setWorkingHours(barberId, dto);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/blocks")
-    public ResponseEntity<TimeBlock> createTimeBlock(@RequestBody TimeBlockRequestDTO dto) {
+    public ResponseEntity<TimeBlock> createTimeBlock(@Valid @RequestBody TimeBlockRequestDTO dto) {
         TimeBlock newBlock = scheduleManagementService.createTimeBlock(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newBlock);
     }
