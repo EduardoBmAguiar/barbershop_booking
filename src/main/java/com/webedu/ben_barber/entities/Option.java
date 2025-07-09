@@ -30,10 +30,10 @@ public class Option {
     @SequenceGenerator(name = "options_seq", sequenceName = "options", allocationSize = 1)
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @NotNull
+    @Column(nullable = false, length = 100)
     private BigDecimal price;
 
     @JsonIgnore

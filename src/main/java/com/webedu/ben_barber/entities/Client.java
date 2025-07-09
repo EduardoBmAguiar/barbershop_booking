@@ -33,15 +33,14 @@ public class Client /*implements UserDetails*/ {
     @SequenceGenerator(name = "client_seq", sequenceName = "client_seq", allocationSize = 1)
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @NotNull(message = "E-mail cannot be null.")
-    @Email(message = "The email must be valid.")
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @NotNull
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false)
     private String password;
 
     @JsonIgnore
