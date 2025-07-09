@@ -3,7 +3,7 @@ package com.webedu.ben_barber.controllers;
 import com.webedu.ben_barber.dto.ScheduleOverride.ScheduleOverrideRequestDTO;
 import com.webedu.ben_barber.dto.WorkingHours.WorkingHoursResponseDTO;
 import com.webedu.ben_barber.dto.TimeBlock.TimeBlockRequestDTO;
-import com.webedu.ben_barber.dto.WorkingHours.WorkingHoursDTO;
+import com.webedu.ben_barber.dto.WorkingHours.WorkingHoursRequestDTO;
 import com.webedu.ben_barber.entities.TimeBlock;
 import com.webedu.ben_barber.entities.WorkingHours;
 import com.webedu.ben_barber.services.ScheduleManagementService;
@@ -25,7 +25,7 @@ public class ScheduleManagementController {
     private ScheduleManagementService scheduleManagementService;
 
     @PutMapping("/barbers/{barberId}/working-hours")
-    public ResponseEntity<Void> setWorkingHours(@PathVariable Long barberId, @RequestBody WorkingHoursDTO dto) {
+    public ResponseEntity<Void> setWorkingHours(@PathVariable Long barberId, @RequestBody WorkingHoursRequestDTO dto) {
         scheduleManagementService.setWorkingHours(barberId, dto);
         return ResponseEntity.noContent().build();
     }

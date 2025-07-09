@@ -2,7 +2,7 @@ package com.webedu.ben_barber.services;
 
 import com.webedu.ben_barber.dto.ScheduleOverride.ScheduleOverrideRequestDTO;
 import com.webedu.ben_barber.dto.TimeBlock.TimeBlockRequestDTO;
-import com.webedu.ben_barber.dto.WorkingHours.WorkingHoursDTO;
+import com.webedu.ben_barber.dto.WorkingHours.WorkingHoursRequestDTO;
 import com.webedu.ben_barber.entities.*;
 import com.webedu.ben_barber.enums.AppointmentStatus;
 import com.webedu.ben_barber.repositories.*;
@@ -36,7 +36,7 @@ public class ScheduleManagementService {
     private ScheduleOverrideRepository overrideRepository;
 
     @Transactional
-    public void setWorkingHours(Long barberId, WorkingHoursDTO dto) {
+    public void setWorkingHours(Long barberId, WorkingHoursRequestDTO dto) {
 
         if (dto.startTime().isAfter(dto.endTime())) {
             throw new IllegalArgumentException("O horário de início não pode ser depois do horário de término.");
