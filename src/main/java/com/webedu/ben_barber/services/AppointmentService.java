@@ -41,6 +41,9 @@ public class AppointmentService {
     @Autowired
     WorkingHoursRepository workingHoursRepository;
 
+    @Autowired
+    ScheduleOverrideRepository scheduleOverrideRepository;
+
     @Transactional
     public Appointment findById(Long id) {
         log.info("Finding Appointment by id in repository");
@@ -54,12 +57,25 @@ public class AppointmentService {
 
         DayOfWeek dayOfWeek = dto.appointmentDate().getDayOfWeek();
 
-        WorkingHours workingHours = workingHoursRepository
-                .findByBarberIdAndDayOfWeek(dto.idBarber(), dayOfWeek)
-                .orElseThrow(() -> new IllegalStateException("Agendamento inválido: O barbeiro não trabalha neste dia da semana."));
+        Optional<ScheduleOverride> override = scheduleOverrideRepository.findByBarberIdAndOverrideDate(dto.idBarber(), dto.appointmentDate());
+        LocalTime startTime;
+        LocalTime endTime;
+        if (override.isPresent()) {
 
+            startTime = override.get().getStartTime();
+            endTime = override.get().getEndTime();
+
+        } else {
+
+            WorkingHours workingHours = workingHoursRepository
+                    .findByBarberIdAndDayOfWeek(dto.idBarber(), dayOfWeek)
+                    .orElseThrow(() -> new IllegalStateException("Agendamento inválido: O barbeiro não trabalha neste dia da semana."));
+
+            startTime = workingHours.getStartTime();
+            endTime = workingHours.getEndTime();
+        }
         LocalTime requestedTime = dto.appointmentTime();
-        if (requestedTime.isBefore(workingHours.getStartTime()) || requestedTime.isAfter(workingHours.getEndTime())) {
+        if (requestedTime.isBefore(startTime) || requestedTime.isAfter(endTime)) {
             throw new IllegalStateException("Agendamento inválido: O horário solicitado está fora do expediente de trabalho.");
         }
 
