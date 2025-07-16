@@ -37,12 +37,19 @@ public class BarberService {
         Barber existingBarber = barberRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Barber with id " + id + " not found"));
         log.info("Barber found");
 
-        log.info("Updating Barber");
-        existingBarber.setName(dto.name());
-        existingBarber.setEmail(dto.email());
+        if (dto.name() != null && !dto.name().isBlank()) {
+            existingBarber.setName(dto.name());
+            log.info("Updated barber name.");
+        }
+
+        if (dto.email() != null) {
+            existingBarber.setEmail(dto.email());
+            log.info("Updated barber email.");
+        }
 
         if (dto.password() != null && !dto.password().isBlank()) {
-            existingBarber.setPassword(dto.password()); // Lembre-se de aplicar o HASH aqui!
+            existingBarber.setPassword(dto.password()); // Quando se tiver o Spring Security, colocar o Hash
+            log.info("Updating barber password.");
         }
 
         log.info("Barber updated");

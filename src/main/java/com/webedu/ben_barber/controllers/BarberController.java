@@ -51,7 +51,7 @@ public class BarberController {
     @TrackExecutionTime
     @Operation(description = "Esta requisição faz a Atualização de um Barbeiro no banco de dados.", summary = "Realiza a atualização de um Barbeiro", method = "PUT")
     @ApiResponse(responseCode = "200", description = "Barbeiro atualizado")
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<BarberResponseDTO> updateBarber(@RequestBody BarberRequestDTO dto, @PathVariable Long id) {
         log.info("Updating barber: initiated");
         Barber updateBarber = barberService.updateBarber(id, dto);
