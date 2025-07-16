@@ -30,25 +30,13 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status = com.webedu.ben_barber.enums.AppointmentStatus.SCHEDULED;
 
-    @Transient
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long idClient;
-
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @Transient
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long idBarber;
-
     @ManyToOne
     @JoinColumn(name = "barber_id")
     private Barber barber;
-
-    @Transient
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long idOption;
 
     @ManyToOne
     @JoinColumn(name = "option_id")
