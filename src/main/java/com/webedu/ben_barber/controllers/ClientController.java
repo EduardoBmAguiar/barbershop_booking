@@ -50,7 +50,7 @@ public class ClientController {
     @TrackExecutionTime
     @Operation(description = "Esta requisição faz a Atualização de um Cliente no banco de dados.", summary = "Realiza a atualização de um Cliente", method = "PUT")
     @ApiResponse(responseCode = "200", description = "Cliente atualizado")
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ClientResponseDTO> updateClient(@RequestBody ClientRequestDTO dto, @PathVariable Long id) {
         log.info("Updating client: initiated");
         Client updateClient = clientService.updateClient(id, dto);

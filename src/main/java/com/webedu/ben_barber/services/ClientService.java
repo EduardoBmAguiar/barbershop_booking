@@ -34,14 +34,27 @@ public class ClientService {
     @Transactional
     public Client updateClient(Long id, ClientRequestDTO dto) {
         log.info("Finding client by Id");
-        Client clientToUpdate = clientRepository.findById(id)
+        Client existingClient = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
+        log.info("Client found");
 
-        log.info("Updating Client");
-        updateFields(clientMapper.toEntity(dto), clientToUpdate);
+        if (dto.name() != null && !dto.name().isBlank()) {
+            existingClient.setName(dto.name());
+            log.info("Updating client name.");
+        }
+
+        if (dto.email() != null && !dto.email().isBlank()) {
+            existingClient.setEmail(dto.email());
+            log.info("Updating client email.");
+        }
+
+        if (dto.password() != null && !dto.password().isBlank()) {
+            existingClient.setPassword(dto.password()); // Quando se tiver o Spring Security, colocar o Hash
+            log.info("Updating client password.");
+        }
+
         log.info("Client updated");
-
-        return clientRepository.save(clientToUpdate);
+        return clientRepository.save(existingClient);
     }
 
     @Transactional
@@ -69,11 +82,5 @@ public class ClientService {
             log.error("Integrity violation while deleting client {}", id);
             throw new DatabaseException(e.getMessage());
         }
-    }
-
-    private void updateFields(Client source, Client target) {
-        if (source.getName() != null) { target.setName(source.getName()); }
-        if (source.getEmail() != null) { target.setEmail(source.getEmail()); }
-        if (source.getPassword() != null) { target.setPassword(source.getPassword()); }
     }
 }
