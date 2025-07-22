@@ -56,7 +56,7 @@ public class ScheduleService {
             effectiveEndTime = workingHours.getEndTime();
         }
 
-        List<TimeBlock> blocks = timeBlockRepository.findByDateAndBarberOrGlobal(date, barberId);
+        List<TimeBlock> blocks = timeBlockRepository.findAllActiveBySpecificDate(date, barberId);
         if (blocks.stream().anyMatch(b -> b.getStartTime() == null && b.getEndTime() == null)) {
             log.info("Full day block found for date {}.", date);
             return Collections.emptyList();

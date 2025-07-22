@@ -76,6 +76,13 @@ public class ScheduleManagementService {
     }
 
     @Transactional
+    public List<TimeBlock> getTimeBlock(Long barberId) {
+        log.info("Getting time blocks");
+        LocalDate today = LocalDate.now();
+        return timeBlockRepository.findActiveByDateAndBarberOrGlobal(today, barberId);
+    }
+
+    @Transactional
     public void deleteTimeBlock(Long blockId) {
         if (!timeBlockRepository.existsById(blockId)) {
             throw new EntityNotFoundException("Bloqueio de tempo com ID " + blockId + " não encontrado.");

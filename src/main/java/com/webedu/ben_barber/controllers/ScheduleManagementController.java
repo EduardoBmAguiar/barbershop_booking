@@ -1,11 +1,13 @@
 package com.webedu.ben_barber.controllers;
 
 import com.webedu.ben_barber.dto.ScheduleOverride.ScheduleOverrideRequestDTO;
+import com.webedu.ben_barber.dto.TimeBlock.TimeBlockResponseDTO;
 import com.webedu.ben_barber.dto.WorkingHours.WorkingHoursResponseDTO;
 import com.webedu.ben_barber.dto.TimeBlock.TimeBlockRequestDTO;
 import com.webedu.ben_barber.dto.WorkingHours.WorkingHoursRequestDTO;
 import com.webedu.ben_barber.entities.TimeBlock;
 import com.webedu.ben_barber.entities.WorkingHours;
+import com.webedu.ben_barber.mapper.timeblock.TimeBlockMapper;
 import com.webedu.ben_barber.services.ScheduleManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -24,6 +26,9 @@ public class ScheduleManagementController {
     @Autowired
     private ScheduleManagementService scheduleManagementService;
 
+    @Autowired
+    private TimeBlockMapper timeBlockMapper;
+
     @PutMapping("/barbers/{barberId}/working-hours")
     public ResponseEntity<Void> setWorkingHours(@PathVariable Long barberId, @Valid @RequestBody WorkingHoursRequestDTO dto) {
         scheduleManagementService.setWorkingHours(barberId, dto);
@@ -34,6 +39,13 @@ public class ScheduleManagementController {
     public ResponseEntity<TimeBlock> createTimeBlock(@Valid @RequestBody TimeBlockRequestDTO dto) {
         TimeBlock newBlock = scheduleManagementService.createTimeBlock(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newBlock);
+    }
+
+    @GetMapping("/blocks/{barberId}")
+    public ResponseEntity<List<TimeBlockResponseDTO>> getTimeBlock(@PathVariable Long barberId) {
+        List<TimeBlock> timeBlocks = scheduleManagementService.getTimeBlock(barberId);
+        List<TimeBlockResponseDTO> dtoList = timeBlocks.stream().map(timeBlockMapper::toDTO).toList();
+        return ResponseEntity.ok().body(dtoList);
     }
 
     @DeleteMapping("/blocks/{blockId}")
