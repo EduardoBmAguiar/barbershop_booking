@@ -19,6 +19,8 @@ public class TimeBlock {
     @SequenceGenerator(name = "time_block_seq", sequenceName = "time_block_seq", allocationSize = 1)
     private Long id;
 
+    private boolean active = true;
+
     @ManyToOne
     @JoinColumn(name = "barber_id")
     private Barber barber;
